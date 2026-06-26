@@ -1,0 +1,2763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sai Teja Traders | Premium Steel & Cement E-Commerce</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Sai Teja Traders is your trusted B2B supply partner for high-quality Steel TMT Bars, Cement, Binding Wire, and construction materials. View live prices and order online.">
+  
+  <!-- Google Fonts: Outfit (Display) & Inter (Body) -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM CDNs -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <!-- Babel Standalone to compile JSX in browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind Theme Configuration -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              light: '#2d435e',
+              DEFAULT: '#1F3147',
+              dark: '#121e2d'
+            },
+            teal: {
+              light: '#05aab5',
+              DEFAULT: '#008C95',
+              dark: '#006a71'
+            },
+            gold: {
+              light: '#f5c645',
+              DEFAULT: '#D4A017',
+              dark: '#a87c0d'
+            },
+            lightBg: '#F8F8F8',
+            glassBg: 'rgba(255, 255, 255, 0.85)',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif']
+          },
+          boxShadow: {
+            premium: '0 10px 30px -10px rgba(31, 49, 71, 0.1)',
+            glow: '0 0 15px rgba(0, 140, 149, 0.25)',
+            goldGlow: '0 0 15px rgba(212, 160, 23, 0.25)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #F8F8F8;
+      overflow-x: hidden;
+    }
+    h1, h2, h3, h4, h5, h6, .font-display {
+      font-family: 'Outfit', sans-serif;
+    }
+    /* Smooth Scroll */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F8F8F8;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1F3147;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #008C95;
+    }
+    
+    /* Animation keyframes */
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; filter: drop-shadow(0 0 8px #008C95); }
+    }
+    .pulse-glow {
+      animation: pulse-glow 2s infinite ease-in-out;
+    }
+
+    /* Print styling for GST invoices */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-area, #print-area * {
+        visibility: visible;
+      }
+      #print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React JSX Application Script -->
+  <script type="text/babel">
+    const { useState, useEffect, useMemo } = React;
+
+    // --- SEED DATA & INITIALIZATIONS ---
+    const defaultProducts = [
+      { id: 'p1', name: 'JSW NeoSteel TMT Rebars', category: 'Steel TMT Bars', brand: 'JSW', grade: 'Fe-550D', price: 54500, unit: 'Ton', stock: 120, lowStock: 25, spec: 'High ductility, earthquakes-resistant ribbed design, 8mm-32mm sizes.', image: 'steel-jsw' },
+      { id: 'p2', name: 'Tata Tiscon 550SD', category: 'Steel TMT Bars', brand: 'Tata', grade: 'Fe-550SD', price: 56200, unit: 'Ton', stock: 85, lowStock: 20, spec: 'Super Ductile steel rebars, micro-alloyed, rust-resistant.', image: 'steel-tata' },
+      { id: 'p3', name: 'UltraTech Premium OPC 53', category: 'Cement', brand: 'UltraTech', grade: 'Grade 53', price: 425, unit: 'Bag', stock: 1450, lowStock: 200, spec: 'Ordinary Portland Cement, high 28-day compressive strength, ideal for RCC.', image: 'cement-ultratech' },
+      { id: 'p4', name: 'Dalmia Supreme PPC Cement', category: 'Cement', brand: 'Dalmia', grade: 'PPC', price: 385, unit: 'Bag', stock: 950, lowStock: 150, spec: 'Portland Pozzolana Cement, crack-resistant, low heat of hydration, wet environments.', image: 'cement-dalmia' },
+      { id: 'p5', name: 'Tata Wiron Gi Binding Wire', category: 'Binding Wire', brand: 'Tata', grade: '18 Gauge', price: 7900, unit: 'Bundle', stock: 45, lowStock: 10, spec: 'Galvanized iron wire, highly flexible and sturdy for tying reinforcement bars.', image: 'wire-tata' },
+      { id: 'p6', name: 'ACC Gold Water Shield', category: 'Cement', brand: 'ACC', grade: 'Grade 53', price: 445, unit: 'Bag', stock: 18, lowStock: 50, spec: 'Water-repellent premium cement with active water-shield formulas.', image: 'cement-acc' },
+      { id: 'p7', name: 'Vizag Steel TMT Bars', category: 'Steel TMT Bars', brand: 'Vizag', grade: 'Fe-500D', price: 51900, unit: 'Ton', stock: 6, lowStock: 15, spec: 'RINL Vizag steel rebars, clean steel with low sulphur & phosphorus.', image: 'steel-vizag' },
+      { id: 'p8', name: 'Standard Cover Blocks (Concrete)', category: 'Construction Materials', brand: 'Local', grade: '20/25/30mm', price: 350, unit: 'Box', stock: 120, lowStock: 30, spec: 'Concrete spacer blocks to ensure correct rebar reinforcement concrete cover.', image: 'materials-cover' }
+    ];
+
+    const defaultPricesHistory = [
+      { category: 'Steel TMT Bars', currentPrice: 54500, previousPrice: 55000, lastUpdated: 'Today' },
+      { category: 'Cement', currentPrice: 425, previousPrice: 420, lastUpdated: 'Today' },
+      { category: 'Binding Wire', currentPrice: 7900, previousPrice: 7850, lastUpdated: 'Yesterday' }
+    ];
+
+    const defaultOrders = [
+      {
+        id: 'ORD-98721',
+        customerName: 'Bharath Builders',
+        customerMobile: '9876543210',
+        customerGST: '36AAAAA1111A1Z1',
+        deliveryAddress: 'Plot 42, Hitec City, Hyderabad, 500081',
+        date: '2026-06-18',
+        deliveryDate: '2026-06-21',
+        items: [
+          { productId: 'p1', name: 'JSW NeoSteel TMT Rebars', quantity: 2, price: 54500, unit: 'Ton' },
+          { productId: 'p3', name: 'UltraTech Premium OPC 53', quantity: 100, price: 425, unit: 'Bag' }
+        ],
+        subtotal: 151500,
+        gst: 27270,
+        total: 178770,
+        paymentMethod: 'Credit Account',
+        paymentStatus: 'Paid',
+        deliveryStatus: 'Processing',
+        trackingHistory: [
+          { status: 'Order Confirmed', time: '2026-06-18 10:30 AM', comment: 'Order placed and B2B credit check completed.' },
+          { status: 'Processing', time: '2026-06-18 02:45 PM', comment: 'Inventory allocated at warehouse.' }
+        ]
+      }
+    ];
+
+    // --- MAIN REACT COMPONENT ---
+    function App() {
+      // LocalStorage state syncing
+      const [products, setProducts] = useState(() => {
+        const local = localStorage.getItem('st_products');
+        return local ? JSON.parse(local) : defaultProducts;
+      });
+
+      const [pricesHistory, setPricesHistory] = useState(() => {
+        const local = localStorage.getItem('st_prices_history');
+        return local ? JSON.parse(local) : defaultPricesHistory;
+      });
+
+      const [orders, setOrders] = useState(() => {
+        const local = localStorage.getItem('st_orders');
+        return local ? JSON.parse(local) : defaultOrders;
+      });
+
+      const [currentUser, setCurrentUser] = useState(() => {
+        const local = localStorage.getItem('st_current_user');
+        return local ? JSON.parse(local) : null; // { name: '...', email: '...', role: 'customer'/'admin' }
+      });
+
+      useEffect(() => {
+        localStorage.setItem('st_products', JSON.stringify(products));
+      }, [products]);
+
+      useEffect(() => {
+        localStorage.setItem('st_prices_history', JSON.stringify(pricesHistory));
+      }, [pricesHistory]);
+
+      useEffect(() => {
+        localStorage.setItem('st_orders', JSON.stringify(orders));
+      }, [orders]);
+
+      useEffect(() => {
+        if (currentUser) {
+          localStorage.setItem('st_current_user', JSON.stringify(currentUser));
+        } else {
+          localStorage.removeItem('st_current_user');
+        }
+      }, [currentUser]);
+
+      // Routing State: 'home' | 'catalog' | 'cart' | 'checkout' | 'tracking' | 'customer' | 'admin' | 'auth'
+      const [currentPage, setCurrentPage] = useState('home');
+      const [selectedProductId, setSelectedProductId] = useState(null);
+      const [trackingOrderId, setTrackingOrderId] = useState('');
+      const [selectedOrderForInvoice, setSelectedOrderForInvoice] = useState(null);
+
+      // Cart State
+      const [cart, setCart] = useState(() => {
+        const local = localStorage.getItem('st_cart');
+        return local ? JSON.parse(local) : []; // { product, quantity }
+      });
+
+      useEffect(() => {
+        localStorage.setItem('st_cart', JSON.stringify(cart));
+      }, [cart]);
+
+      // Notification State
+      const [toasts, setToasts] = useState([]);
+      const addToast = (message, type = 'success') => {
+        const id = Date.now();
+        setToasts((prev) => [...prev, { id, message, type }]);
+        setTimeout(() => {
+          setToasts((prev) => prev.filter((t) => t.id !== id));
+        }, 4000);
+      };
+
+      // Helper routing
+      const navigate = (page) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setCurrentPage(page);
+      };
+
+      // Log out handler
+      const handleLogout = () => {
+        setCurrentUser(null);
+        setCart([]);
+        addToast('Successfully logged out!');
+        navigate('home');
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col justify-between bg-lightBg font-sans text-navy">
+          
+          {/* TOAST SYSTEM */}
+          <div className="fixed top-24 right-4 z-50 flex flex-col gap-2 pointer-events-none">
+            {toasts.map((t) => (
+              <div
+                key={t.id}
+                className={`px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 transition-all duration-300 transform translate-x-0 pointer-events-auto border-l-4 ${
+                  t.type === 'success'
+                    ? 'bg-white border-teal text-navy'
+                    : t.type === 'error'
+                    ? 'bg-red-50 border-red-500 text-red-800'
+                    : 'bg-yellow-50 border-gold text-yellow-900'
+                }`}
+              >
+                {t.type === 'success' && <i className="fa-solid fa-circle-check text-teal"></i>}
+                {t.type === 'error' && <i className="fa-solid fa-circle-exclamation text-red-500"></i>}
+                {t.type === 'warning' && <i className="fa-solid fa-triangle-exclamation text-gold"></i>}
+                <span className="text-sm font-semibold">{t.message}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* DYNAMIC HEADER */}
+          <Navbar 
+            currentPage={currentPage} 
+            navigate={navigate} 
+            currentUser={currentUser} 
+            handleLogout={handleLogout} 
+            cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)} 
+          />
+
+          {/* MAIN PAGE ROUTER */}
+          <main className="flex-grow pt-20">
+            {currentPage === 'home' && (
+              <HomePage 
+                navigate={navigate} 
+                pricesHistory={pricesHistory} 
+                products={products} 
+                setSelectedProductId={(id) => { setSelectedProductId(id); navigate('catalog'); }} 
+              />
+            )}
+            
+            {currentPage === 'catalog' && (
+              <CatalogPage 
+                products={products} 
+                selectedProductId={selectedProductId}
+                setSelectedProductId={setSelectedProductId}
+                cart={cart}
+                setCart={setCart}
+                addToast={addToast}
+                navigate={navigate}
+              />
+            )}
+
+            {currentPage === 'cart' && (
+              <CartPage 
+                cart={cart} 
+                setCart={setCart} 
+                navigate={navigate} 
+                currentUser={currentUser} 
+                addToast={addToast} 
+              />
+            )}
+
+            {currentPage === 'checkout' && (
+              <CheckoutPage 
+                cart={cart} 
+                setCart={setCart} 
+                currentUser={currentUser} 
+                orders={orders} 
+                setOrders={setOrders} 
+                products={products}
+                setProducts={setProducts}
+                navigate={navigate} 
+                addToast={addToast}
+                setSelectedOrderForInvoice={setSelectedOrderForInvoice}
+              />
+            )}
+
+            {currentPage === 'tracking' && (
+              <TrackingPage 
+                orders={orders} 
+                trackingOrderId={trackingOrderId}
+                setTrackingOrderId={setTrackingOrderId}
+              />
+            )}
+
+            {currentPage === 'customer' && (
+              <CustomerDashboard 
+                currentUser={currentUser} 
+                orders={orders} 
+                navigate={navigate}
+                setTrackingOrderId={setTrackingOrderId}
+                setSelectedOrderForInvoice={setSelectedOrderForInvoice}
+              />
+            )}
+
+            {currentPage === 'admin' && (
+              <AdminDashboard 
+                products={products} 
+                setProducts={setProducts} 
+                orders={orders} 
+                setOrders={setOrders}
+                pricesHistory={pricesHistory}
+                setPricesHistory={setPricesHistory}
+                addToast={addToast}
+                setSelectedOrderForInvoice={setSelectedOrderForInvoice}
+                navigate={navigate}
+              />
+            )}
+
+            {currentPage === 'auth' && (
+              <AuthPage 
+                setCurrentUser={setCurrentUser} 
+                navigate={navigate} 
+                addToast={addToast} 
+              />
+            )}
+          </main>
+
+          {/* DYNAMIC INVOICE PRINT MODAL */}
+          {selectedOrderForInvoice && (
+            <InvoiceModal 
+              order={selectedOrderForInvoice} 
+              onClose={() => setSelectedOrderForInvoice(null)} 
+            />
+          )}
+
+          {/* FOOTER */}
+          <Footer navigate={navigate} />
+
+        </div>
+      );
+    }
+
+    // --- COMPONENT: NAVBAR ---
+    function Navbar({ currentPage, navigate, currentUser, handleLogout, cartCount }) {
+      const [isOpen, setIsOpen] = useState(false);
+      return (
+        <header className="fixed top-0 left-0 w-full z-40 bg-navy text-white shadow-lg transition-all duration-300">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-20">
+              {/* Brand Logo */}
+              <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('home')}>
+                <div className="bg-teal p-2.5 rounded-lg flex items-center justify-center shadow-glow border border-teal-light">
+                  <i className="fa-solid fa-trowel-bricks text-xl text-white"></i>
+                </div>
+                <div>
+                  <span className="font-display font-extrabold text-2xl tracking-tight text-white block">
+                    SAI TEJA <span className="text-gold">TRADERS</span>
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-semibold tracking-widest uppercase block -mt-1">
+                    Steel & Cement B2B Hub
+                  </span>
+                </div>
+              </div>
+
+              {/* Desktop Nav Links */}
+              <nav className="hidden md:flex items-center space-x-1 font-medium">
+                <button 
+                  onClick={() => navigate('home')} 
+                  className={`px-3 py-2 rounded-md text-sm transition-colors ${currentPage === 'home' ? 'text-gold' : 'hover:text-teal'}`}
+                >
+                  Home
+                </button>
+                <button 
+                  onClick={() => navigate('catalog')} 
+                  className={`px-3 py-2 rounded-md text-sm transition-colors ${currentPage === 'catalog' ? 'text-gold' : 'hover:text-teal'}`}
+                >
+                  Catalogue
+                </button>
+                <button 
+                  onClick={() => navigate('tracking')} 
+                  className={`px-3 py-2 rounded-md text-sm transition-colors ${currentPage === 'tracking' ? 'text-gold' : 'hover:text-teal'}`}
+                >
+                  Track Order
+                </button>
+                
+                {currentUser && currentUser.role === 'customer' && (
+                  <button 
+                    onClick={() => navigate('customer')} 
+                    className={`px-3 py-2 rounded-md text-sm transition-colors ${currentPage === 'customer' ? 'text-gold' : 'hover:text-teal'}`}
+                  >
+                    My Dashboard
+                  </button>
+                )}
+
+                {currentUser && currentUser.role === 'admin' && (
+                  <button 
+                    onClick={() => navigate('admin')} 
+                    className={`px-3 py-2 rounded-md text-sm font-semibold text-gold border border-gold/30 bg-gold/10 px-4 py-1.5 rounded-md hover:bg-gold hover:text-navy transition-all duration-300 ${currentPage === 'admin' ? 'bg-gold text-navy' : ''}`}
+                  >
+                    <i className="fa-solid fa-lock-open mr-1.5"></i>Admin Console
+                  </button>
+                )}
+              </nav>
+
+              {/* User Account Controls / Cart */}
+              <div className="hidden md:flex items-center space-x-4">
+                {/* Cart Icon */}
+                <button 
+                  onClick={() => navigate('cart')} 
+                  className="relative p-2.5 rounded-full hover:bg-navy-light text-white transition-colors"
+                >
+                  <i className="fa-solid fa-cart-shopping text-lg"></i>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-teal text-white text-[11px] font-bold rounded-full w-5 h-5 flex items-center justify-center border-2 border-navy">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+
+                {currentUser ? (
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <span className="text-sm font-semibold block text-slate-100">{currentUser.name}</span>
+                      <span className="text-[10px] text-slate-400 capitalize block -mt-1">{currentUser.role}</span>
+                    </div>
+                    <button 
+                      onClick={handleLogout} 
+                      className="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                    >
+                      <i className="fa-solid fa-sign-out-alt"></i>Logout
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => navigate('auth')} 
+                    className="bg-teal hover:bg-teal-dark text-white font-semibold text-sm px-5 py-2.5 rounded-lg shadow-glow hover:shadow-lg transition-all duration-300"
+                  >
+                    <i className="fa-solid fa-user mr-1.5"></i>Login / Sign Up
+                  </button>
+                )}
+              </div>
+
+              {/* Mobile hamburger button */}
+              <div className="md:hidden flex items-center gap-3">
+                <button 
+                  onClick={() => navigate('cart')} 
+                  className="relative p-2 text-white"
+                >
+                  <i className="fa-solid fa-cart-shopping text-lg"></i>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-teal text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+                <button
+                  onClick={() => setIsOpen(!isOpen)}
+                  className="text-white p-2 rounded-md hover:bg-navy-light focus:outline-none"
+                >
+                  <i className={`fa-solid ${isOpen ? 'fa-xmark' : 'fa-bars'} text-xl`}></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile Menu */}
+          {isOpen && (
+            <div className="md:hidden bg-navy-dark border-t border-navy-light px-4 pt-2 pb-6 space-y-2">
+              <button 
+                onClick={() => { navigate('home'); setIsOpen(false); }} 
+                className="w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-light"
+              >
+                Home
+              </button>
+              <button 
+                onClick={() => { navigate('catalog'); setIsOpen(false); }} 
+                className="w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-light"
+              >
+                Catalogue
+              </button>
+              <button 
+                onClick={() => { navigate('tracking'); setIsOpen(false); }} 
+                className="w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-light"
+              >
+                Track Order
+              </button>
+              
+              {currentUser && currentUser.role === 'customer' && (
+                <button 
+                  onClick={() => { navigate('customer'); setIsOpen(false); }} 
+                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium hover:bg-navy-light"
+                >
+                  My Dashboard
+                </button>
+              )}
+              {currentUser && currentUser.role === 'admin' && (
+                <button 
+                  onClick={() => { navigate('admin'); setIsOpen(false); }} 
+                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gold hover:bg-navy-light"
+                >
+                  Admin Console
+                </button>
+              )}
+
+              <hr className="border-navy-light my-3" />
+              
+              {currentUser ? (
+                <div className="flex flex-col gap-2">
+                  <div className="px-3">
+                    <span className="text-sm font-bold block text-white">{currentUser.name}</span>
+                    <span className="text-xs text-slate-400 capitalize block">{currentUser.role}</span>
+                  </div>
+                  <button 
+                    onClick={() => { handleLogout(); setIsOpen(false); }} 
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold text-sm py-2 px-3 rounded-md text-center transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => { navigate('auth'); setIsOpen(false); }} 
+                  className="w-full bg-teal text-white font-semibold text-sm py-2.5 px-3 rounded-md text-center transition-colors shadow-glow"
+                >
+                  Login / Sign Up
+                </button>
+              )}
+            </div>
+          )}
+        </header>
+      );
+    }
+
+    // --- COMPONENT: FOOTER ---
+    function Footer({ navigate }) {
+      return (
+        <footer className="bg-navy text-slate-300 border-t-4 border-teal pt-16 pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="bg-teal p-2 rounded-lg text-white">
+                  <i className="fa-solid fa-trowel-bricks text-lg"></i>
+                </div>
+                <span className="font-display font-extrabold text-xl tracking-tight text-white">
+                  SAI TEJA <span className="text-gold">TRADERS</span>
+                </span>
+              </div>
+              <p className="text-sm text-slate-400 leading-relaxed mb-4 max-w-sm">
+                Sai Teja Traders is India's leading digital platform supplying premium quality TMT steel bars, binding wire, and cement products directly to B2B building contractors, infrastructure developers, and builders.
+              </p>
+              <div className="flex gap-4">
+                <a href="#" className="p-2 rounded-full bg-navy-light text-slate-400 hover:text-teal hover:bg-white transition-all"><i className="fa-brands fa-facebook-f"></i></a>
+                <a href="#" className="p-2 rounded-full bg-navy-light text-slate-400 hover:text-teal hover:bg-white transition-all"><i className="fa-brands fa-linkedin-in"></i></a>
+                <a href="#" className="p-2 rounded-full bg-navy-light text-slate-400 hover:text-teal hover:bg-white transition-all"><i className="fa-brands fa-twitter"></i></a>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-display text-white font-bold text-sm uppercase tracking-wider mb-4">Product Catalog</h3>
+              <ul className="space-y-2.5 text-sm font-medium">
+                <li><button onClick={() => navigate('catalog')} className="hover:text-teal transition-colors">Steel TMT Rebars</button></li>
+                <li><button onClick={() => navigate('catalog')} className="hover:text-teal transition-colors">OPC & PPC Cements</button></li>
+                <li><button onClick={() => navigate('catalog')} className="hover:text-teal transition-colors">Binding Galvanized Wire</button></li>
+                <li><button onClick={() => navigate('catalog')} className="hover:text-teal transition-colors">Construction Spacer Blocks</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-display text-white font-bold text-sm uppercase tracking-wider mb-4">Contact Support</h3>
+              <ul className="space-y-3 text-sm">
+                <li className="flex items-start gap-2.5">
+                  <i className="fa-solid fa-location-dot text-teal mt-1"></i>
+                  <span className="text-slate-400 text-xs">D-No 12-42, Industrial Area, Jeedimetla, Hyderabad, Telangana, 500055</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <i className="fa-solid fa-phone text-teal"></i>
+                  <span className="text-slate-400 font-semibold">+91 90001 23456</span>
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <i className="fa-solid fa-envelope text-teal"></i>
+                  <span className="text-slate-400">info@saitejatraders.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-navy-light mt-12 pt-6 text-center text-xs text-slate-500 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span>© 2026 Sai Teja Traders. All Rights Reserved. GSTIN: 36AAAAA1111A1Z1.</span>
+            <div className="flex gap-4">
+              <a href="#" className="hover:text-teal">Terms & Conditions</a>
+              <a href="#" className="hover:text-teal">Privacy Policy</a>
+              <a href="#" className="hover:text-teal">GST Invoicing Policy</a>
+            </div>
+          </div>
+        </footer>
+      );
+    }
+
+    // --- UTILITY COMPONENT: PRODUCT MOCK SVG ---
+    function ProductImage({ type }) {
+      if (type.includes('steel')) {
+        return (
+          <svg viewBox="0 0 120 120" className="w-full h-full bg-slate-100 rounded-lg p-4">
+            <rect width="120" height="120" fill="#f1f5f9" rx="8" />
+            <line x1="20" y1="100" x2="100" y2="20" stroke="#475569" strokeWidth="8" strokeLinecap="round" />
+            <line x1="40" y1="100" x2="100" y2="40" stroke="#64748b" strokeWidth="8" strokeLinecap="round" />
+            <line x1="20" y1="80" x2="80" y2="20" stroke="#334155" strokeWidth="8" strokeLinecap="round" />
+            {/* Rebar ribs */}
+            <path d="M 28 92 L 32 96 M 40 80 L 44 84 M 52 68 L 56 72 M 64 56 L 68 60 M 76 44 L 80 48 M 88 32 L 92 36" stroke="#ffffff" strokeWidth="2.5" />
+            <path d="M 48 92 L 52 96 M 60 80 L 64 84 M 72 68 L 76 72 M 84 56 L 88 60 M 92 48 L 96 52" stroke="#ffffff" strokeWidth="2.5" />
+            <text x="12" y="112" fill="#D4A017" fontSize="10" fontWeight="bold">TMT Fe-550</text>
+          </svg>
+        );
+      }
+      if (type.includes('cement')) {
+        return (
+          <svg viewBox="0 0 120 120" className="w-full h-full bg-slate-100 rounded-lg p-4">
+            <rect width="120" height="120" fill="#e2e8f0" rx="8" />
+            <polygon points="30,30 90,30 100,90 20,90" fill="#94a3b8" stroke="#475569" strokeWidth="3" />
+            <line x1="30" y1="30" x2="90" y2="30" stroke="#ffffff" strokeWidth="2" />
+            <rect x="35" y="45" width="50" height="30" fill="#ffffff" rx="3" />
+            <text x="40" y="58" fill="#1F3147" fontSize="10" fontWeight="bold" fontFamily="sans-serif">CEMENT</text>
+            <text x="45" y="70" fill="#008C95" fontSize="8" fontWeight="black" fontFamily="sans-serif">53 GRADE</text>
+            <text x="25" y="112" fill="#475569" fontSize="9" fontWeight="bold">Premium Bag</text>
+          </svg>
+        );
+      }
+      if (type.includes('wire')) {
+        return (
+          <svg viewBox="0 0 120 120" className="w-full h-full bg-slate-100 rounded-lg p-4">
+            <rect width="120" height="120" fill="#f1f5f9" rx="8" />
+            <circle cx="60" cy="60" r="35" fill="none" stroke="#64748b" strokeWidth="6" />
+            <circle cx="60" cy="60" r="30" fill="none" stroke="#475569" strokeWidth="4" />
+            <circle cx="60" cy="60" r="25" fill="none" stroke="#94a3b8" strokeWidth="2" />
+            <line x1="25" y1="60" x2="95" y2="60" stroke="#334155" strokeWidth="1.5" />
+            <line x1="60" y1="25" x2="60" y2="95" stroke="#334155" strokeWidth="1.5" />
+            <text x="20" y="112" fill="#64748b" fontSize="9" fontWeight="bold">Gi Binding Wire</text>
+          </svg>
+        );
+      }
+      // default / materials
+      return (
+        <svg viewBox="0 0 120 120" className="w-full h-full bg-slate-100 rounded-lg p-4">
+          <rect width="120" height="120" fill="#f1f5f9" rx="8" />
+          <rect x="40" y="40" width="40" height="40" fill="#cbd5e1" stroke="#475569" strokeWidth="3" rx="2" />
+          <circle cx="50" cy="50" r="5" fill="#94a3b8" />
+          <circle cx="70" cy="50" r="5" fill="#94a3b8" />
+          <circle cx="50" cy="70" r="5" fill="#94a3b8" />
+          <circle cx="70" cy="70" r="5" fill="#94a3b8" />
+          <text x="35" y="112" fill="#475569" fontSize="10" fontWeight="bold">Spacer block</text>
+        </svg>
+      );
+    }
+
+    // --- COMPONENT: HOME PAGE ---
+    function HomePage({ navigate, pricesHistory, products, setSelectedProductId }) {
+      const featuredList = products.slice(0, 3);
+      return (
+        <div>
+          {/* HERO SECTION */}
+          <section className="relative bg-navy text-white overflow-hidden py-24 md:py-32">
+            <div className="absolute inset-0 opacity-15">
+              {/* Construction grid backdrop */}
+              <div className="absolute inset-0" style={{ 
+                backgroundImage: 'radial-gradient(#008C95 1.5px, transparent 1.5px), radial-gradient(#008C95 1.5px, #1F3147 1.5px)',
+                backgroundSize: '40px 40px',
+                backgroundPosition: '0 0, 20px 20px'
+              }}></div>
+            </div>
+            
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center md:text-left md:flex items-center justify-between gap-12">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 bg-teal/20 border border-teal/40 px-3.5 py-1.5 rounded-full text-teal-light text-xs font-semibold uppercase tracking-wider mb-6">
+                  <span className="w-2 h-2 rounded-full bg-teal pulse-glow"></span>
+                  ISO 9001:2015 Certified B2B Supplier
+                </div>
+                <h1 className="text-4xl md:text-6xl font-display font-extrabold tracking-tight mb-4 leading-tight">
+                  Your Trusted Steel & <br/>
+                  <span className="text-teal">Cement Supply</span> Partner
+                </h1>
+                <p className="text-base md:text-lg text-slate-300 mb-8 max-w-xl leading-relaxed">
+                  Powering infrastructure and real estate across India with premium grade cement bags and dynamic-tested, high-ductility TMT Steel rebars.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                  <button 
+                    onClick={() => navigate('catalog')} 
+                    className="bg-teal hover:bg-teal-dark text-white font-bold px-8 py-4 rounded-xl shadow-glow hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    Browse Products <i className="fa-solid fa-arrow-right"></i>
+                  </button>
+                  <a 
+                    href="#contact" 
+                    className="bg-navy-light hover:bg-navy border border-slate-700 text-white font-bold px-8 py-4 rounded-xl hover:border-teal transition-all duration-300 text-center"
+                  >
+                    Get B2B Quote
+                  </a>
+                </div>
+              </div>
+
+              {/* Live price card widget in Hero */}
+              <div className="mt-12 md:mt-0 bg-navy-dark/95 border border-slate-800 rounded-2xl p-6 shadow-premium max-w-sm mx-auto w-full">
+                <div className="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+                  <h3 className="font-display font-bold text-base text-white flex items-center gap-2">
+                    <i className="fa-solid fa-chart-line text-teal"></i> Live Daily Prices
+                  </h3>
+                  <span className="text-[10px] bg-teal/15 text-teal px-2 py-0.5 rounded font-bold uppercase">Dynamic</span>
+                </div>
+                <div className="space-y-4">
+                  {pricesHistory.map((p, idx) => {
+                    const diff = p.currentPrice - p.previousPrice;
+                    return (
+                      <div key={idx} className="flex justify-between items-center bg-navy-light/40 p-3 rounded-lg border border-slate-800/60">
+                        <div>
+                          <span className="text-xs text-slate-400 font-semibold block">{p.category}</span>
+                          <span className="font-display font-extrabold text-base text-white">
+                            ₹{p.currentPrice.toLocaleString('en-IN')}/{p.category.includes('Cement') ? 'Bag' : p.category.includes('Wire') ? 'Bundle' : 'Ton'}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className={`text-xs font-bold flex items-center gap-1 ${diff >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                            <i className={`fa-solid ${diff >= 0 ? 'fa-caret-up' : 'fa-caret-down'}`}></i>
+                            {diff >= 0 ? '+' : ''}{diff.toLocaleString('en-IN')}
+                          </span>
+                          <span className="text-[10px] text-slate-500 block">vs yesterday</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-[10px] text-slate-500 text-center mt-4">
+                  *GST (18%) and transport logistics applicable extra.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ABOUT SECTION */}
+          <section className="py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <h2 className="text-xs uppercase font-extrabold tracking-widest text-teal mb-2">About Our Platform</h2>
+                <h3 className="text-3xl md:text-4xl font-display font-bold text-navy">
+                  Revolutionizing Industrial Material Sourcing
+                </h3>
+                <p className="mt-4 text-slate-500 leading-relaxed text-sm">
+                  Sai Teja Traders bridges the gap between major steel plants and cement manufacturers, and the construction developers who build our homes and cities. We provide bulk pricing, dynamic updates, and streamlined order logistics in one unified platform.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="p-8 rounded-2xl bg-lightBg hover:bg-white hover:shadow-premium hover:-translate-y-1.5 transition-all duration-300 border border-slate-100">
+                  <div className="w-12 h-12 rounded-xl bg-teal/10 flex items-center justify-center text-teal text-xl mb-6">
+                    <i className="fa-solid fa-shield-halved"></i>
+                  </div>
+                  <h4 className="font-display font-bold text-lg mb-3">100% Certified Grades</h4>
+                  <p className="text-slate-500 text-sm leading-relaxed">
+                    We deliver certified structural materials including JSW NeoSteel Fe-550D and UltraTech cement grades with mill certificate reports.
+                  </p>
+                </div>
+                
+                <div className="p-8 rounded-2xl bg-lightBg hover:bg-white hover:shadow-premium hover:-translate-y-1.5 transition-all duration-300 border border-slate-100">
+                  <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold text-xl mb-6">
+                    <i className="fa-solid fa-truck-moving"></i>
+                  </div>
+                  <h4 className="font-display font-bold text-lg mb-3">Scheduled Delivery</h4>
+                  <p className="text-slate-500 text-sm leading-relaxed">
+                    Book orders with designated delivery dates. Choose dates matching your slab casting schedules to minimize site clutter.
+                  </p>
+                </div>
+
+                <div className="p-8 rounded-2xl bg-lightBg hover:bg-white hover:shadow-premium hover:-translate-y-1.5 transition-all duration-300 border border-slate-100">
+                  <div className="w-12 h-12 rounded-xl bg-teal/10 flex items-center justify-center text-teal text-xl mb-6">
+                    <i className="fa-solid fa-receipt"></i>
+                  </div>
+                  <h4 className="font-display font-bold text-lg mb-3">GST-Compliant Invoicing</h4>
+                  <p className="text-slate-500 text-sm leading-relaxed">
+                    Every order triggers automated dynamic generation of tax invoices specifying CGST/SGST with custom corporate GSTIN support.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* FEATURED PRODUCTS */}
+          <section className="py-20 bg-lightBg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex justify-between items-end mb-12">
+                <div>
+                  <h2 className="text-xs uppercase font-extrabold tracking-widest text-teal mb-2">High Demand</h2>
+                  <h3 className="text-3xl font-display font-bold text-navy">Featured Materials</h3>
+                </div>
+                <button 
+                  onClick={() => navigate('catalog')} 
+                  className="text-teal font-semibold text-sm hover:text-teal-dark flex items-center gap-1.5 transition-colors"
+                >
+                  View All Products <i className="fa-solid fa-chevron-right"></i>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {featuredList.map((prod) => (
+                  <div key={prod.id} className="bg-white rounded-2xl overflow-hidden shadow-premium border border-slate-100 hover:shadow-lg transition-shadow">
+                    <div className="h-48 w-full p-4 bg-slate-55 flex items-center justify-center">
+                      <ProductImage type={prod.image} />
+                    </div>
+                    <div className="p-6">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-[11px] bg-slate-100 text-navy font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                          {prod.brand}
+                        </span>
+                        <span className="text-xs text-slate-500">{prod.grade}</span>
+                      </div>
+                      <h4 className="font-display font-bold text-lg text-navy mb-3 line-clamp-1">{prod.name}</h4>
+                      <p className="text-xs text-slate-400 line-clamp-2 mb-4">{prod.spec}</p>
+                      <div className="flex justify-between items-center border-t border-slate-100 pt-4">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block uppercase font-semibold">Live Price</span>
+                          <span className="font-display font-extrabold text-navy text-lg">
+                            ₹{prod.price.toLocaleString('en-IN')}<span className="text-xs font-normal text-slate-500"> / {prod.unit}</span>
+                          </span>
+                        </div>
+                        <button 
+                          onClick={() => { setSelectedProductId(prod.id); navigate('catalog'); }}
+                          className="bg-navy hover:bg-navy-light text-white text-xs font-semibold px-4.5 py-2.5 rounded-lg transition-colors"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* WHY CHOOSE US */}
+          <section className="py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 md:flex items-center justify-between gap-16">
+              <div className="w-full md:w-1/2 mb-12 md:mb-0">
+                {/* Visual construction motif using SVGs or styling */}
+                <div className="relative">
+                  <div className="absolute -top-4 -left-4 w-40 h-40 bg-teal/5 rounded-3xl -z-10"></div>
+                  <div className="absolute -bottom-4 -right-4 w-40 h-40 bg-gold/5 rounded-3xl -z-10"></div>
+                  <div className="bg-navy text-white rounded-3xl p-8 shadow-premium border border-slate-800">
+                    <h4 className="font-display font-extrabold text-2xl mb-6">Our Operations at a Glance</h4>
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-4">
+                        <span className="font-display text-4xl font-black text-teal">15k+</span>
+                        <div>
+                          <span className="text-sm font-semibold block text-slate-100">Metric Tons Delivered</span>
+                          <span className="text-xs text-slate-400">Over 500+ projects completed successfully</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="font-display text-4xl font-black text-gold">2.4h</span>
+                        <div>
+                          <span className="text-sm font-semibold block text-slate-100">Avg. Delivery Dispatch</span>
+                          <span className="text-xs text-slate-400">Rapid processing at primary logistics depots</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="font-display text-4xl font-black text-teal">100%</span>
+                        <div>
+                          <span className="text-sm font-semibold block text-slate-100">Transparency</span>
+                          <span className="text-xs text-slate-400">Zero price manipulation, live catalog prices</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-full md:w-1/2">
+                <h2 className="text-xs uppercase font-extrabold tracking-widest text-teal mb-2">Our Advantages</h2>
+                <h3 className="text-3xl font-display font-bold text-navy mb-6">
+                  Why Construction Developers Trust Sai Teja Traders
+                </h3>
+                <div className="space-y-4 text-sm">
+                  <div className="flex gap-3">
+                    <i className="fa-solid fa-circle-check text-teal mt-1"></i>
+                    <p className="text-slate-500">
+                      <strong>Real-time Stock Count:</strong> No inventory surprises. You see exactly what is in stock at our warehouse before placing the B2B order.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <i className="fa-solid fa-circle-check text-teal mt-1"></i>
+                    <p className="text-slate-500">
+                      <strong>Payment Flexibility:</strong> We support Credit Accounts for long-term contracted builders alongside UPI, Cards, and Net Banking.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <i className="fa-solid fa-circle-check text-teal mt-1"></i>
+                    <p className="text-slate-500">
+                      <strong>Transparent Tracking:</strong> Real-time shipment status reports visible to client contractors, with notifications at each checkpoint.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* CUSTOMER TESTIMONIALS */}
+          <section className="py-20 bg-lightBg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center max-w-3xl mx-auto mb-16">
+                <h2 className="text-xs uppercase font-extrabold tracking-widest text-teal mb-2">Success Stories</h2>
+                <h3 className="text-3xl font-display font-bold text-navy">Customer Testimonials</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-sm">
+                <div className="bg-white p-6 rounded-2xl shadow-premium border border-slate-100">
+                  <div className="flex gap-1 text-gold mb-4">
+                    <i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i>
+                  </div>
+                  <p className="text-slate-500 italic mb-6 leading-relaxed">
+                    "Sourcing cement for our high-rise structures was always a logistical nightmare. Sai Teja Traders streamlined the pricing and scheduled deliveries. Outstanding B2B support!"
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-navy text-white flex items-center justify-center font-display font-bold text-sm">KS</div>
+                    <div>
+                      <span className="font-bold text-navy block text-sm">K. Srinivas Rao</span>
+                      <span className="text-xs text-slate-400 font-semibold uppercase">Apex Constructions</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl shadow-premium border border-slate-100">
+                  <div className="flex gap-1 text-gold mb-4">
+                    <i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star text-slate-300"></i>
+                  </div>
+                  <p className="text-slate-500 italic mb-6 leading-relaxed">
+                    "Their automated GST invoices and easy Credit Account checks save our accounting team hours of paperwork. Highly recommended for commercial construction developers."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-teal text-white flex items-center justify-center font-display font-bold text-sm">AM</div>
+                    <div>
+                      <span className="font-bold text-navy block text-sm">Anirudh Mehta</span>
+                      <span className="text-xs text-slate-400 font-semibold uppercase">Mehta InfraProjects</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-2xl shadow-premium border border-slate-100">
+                  <div className="flex gap-1 text-gold mb-4">
+                    <i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i><i className="fa-solid fa-star"></i>
+                  </div>
+                  <p className="text-slate-500 italic mb-6 leading-relaxed">
+                    "Live price reports help us quote our contract clients accurately. The real-time order tracking timeline shows dispatch details down to the minutes."
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-navy text-white flex items-center justify-center font-display font-bold text-sm">PR</div>
+                    <div>
+                      <span className="font-bold text-navy block text-sm">P. Raghavan</span>
+                      <span className="text-xs text-slate-400 font-semibold uppercase">Prithvi Foundations</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* CONTACT INFORMATION */}
+          <section id="contact" className="py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="bg-navy text-white rounded-3xl overflow-hidden shadow-premium grid grid-cols-1 lg:grid-cols-2 border border-slate-800">
+                <div className="p-8 sm:p-12 lg:p-16">
+                  <h3 className="font-display font-extrabold text-3xl mb-4">Get an Instant Quote</h3>
+                  <p className="text-slate-400 text-sm leading-relaxed mb-8">
+                    Need customized bulk supply pricing for high-tonnage construction orders? Reach out directly and our sales executives will generate a custom quote within 2 hours.
+                  </p>
+                  <form onSubmit={(e) => { e.preventDefault(); alert('B2B Quote inquiry successfully sent!'); }} className="space-y-4 text-navy">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <input type="text" placeholder="Your Name" required className="bg-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal" />
+                      <input type="tel" placeholder="Mobile Number" required className="bg-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal" />
+                    </div>
+                    <input type="email" placeholder="Business Email" required className="w-full bg-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal" />
+                    <textarea placeholder="Specify requirements (e.g. 50 Tons JSW Rebar, 200 bags Cement)" rows="3" required className="w-full bg-slate-100 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal"></textarea>
+                    <button type="submit" className="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3 rounded-xl transition-all duration-300 shadow-glow uppercase tracking-wider text-xs">
+                      Submit Quote Request
+                    </button>
+                  </form>
+                </div>
+                
+                <div className="p-8 sm:p-12 lg:p-16 bg-navy-light/60 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-800">
+                  <div>
+                    <h4 className="font-display font-bold text-xl mb-6 text-teal-light">Sales Office Hours</h4>
+                    <div className="space-y-4 text-sm text-slate-300">
+                      <div className="flex justify-between border-b border-slate-800/80 pb-2">
+                        <span>Monday - Saturday</span>
+                        <span className="font-semibold text-white">09:00 AM - 07:00 PM</span>
+                      </div>
+                      <div className="flex justify-between border-b border-slate-800/80 pb-2">
+                        <span>Sunday Logistics Depot</span>
+                        <span className="font-semibold text-gold">Closed (Dispatches only)</span>
+                      </div>
+                      <div className="flex justify-between pb-2">
+                        <span>GSTIN Reference</span>
+                        <span className="font-semibold text-slate-400">36AAAAA1111A1Z1</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-8">
+                    <p className="text-xs text-slate-400 mb-2">Registered Warehouse Location</p>
+                    <p className="text-sm font-semibold text-white">
+                      Sai Teja Warehousing Complex, Industrial Estate, Jeedimetla, Hyderabad, Telangana, 500055
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    // --- COMPONENT: CATALOGUE PAGE ---
+    function CatalogPage({ products, selectedProductId, setSelectedProductId, cart, setCart, addToast, navigate }) {
+      const [search, setSearch] = useState('');
+      const [selectedCategory, setSelectedCategory] = useState('All');
+      const [selectedBrand, setSelectedBrand] = useState('All');
+      const [sortBy, setSortBy] = useState('name-asc');
+
+      // Unique brands & categories
+      const categories = useMemo(() => ['All', ...new Set(products.map((p) => p.category))], [products]);
+      const brands = useMemo(() => ['All', ...new Set(products.map((p) => p.brand))], [products]);
+
+      // Handle query selection for details modal
+      const selectedProduct = useMemo(() => {
+        if (!selectedProductId) return null;
+        return products.find((p) => p.id === selectedProductId);
+      }, [selectedProductId, products]);
+
+      // Filtering logic
+      const filteredProducts = useMemo(() => {
+        return products.filter((p) => {
+          const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) || 
+                              p.brand.toLowerCase().includes(search.toLowerCase()) ||
+                              p.grade.toLowerCase().includes(search.toLowerCase());
+          const matchCat = selectedCategory === 'All' || p.category === selectedCategory;
+          const matchBrand = selectedBrand === 'All' || p.brand === selectedBrand;
+          return matchSearch && matchCat && matchBrand;
+        }).sort((a, b) => {
+          if (sortBy === 'price-asc') return a.price - b.price;
+          if (sortBy === 'price-desc') return b.price - a.price;
+          if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
+          return b.name.localeCompare(a.name);
+        });
+      }, [products, search, selectedCategory, selectedBrand, sortBy]);
+
+      // Add to cart handler
+      const handleAddToCart = (product, quantity = 1) => {
+        if (product.stock <= 0) {
+          addToast('Product is currently out of stock!', 'error');
+          return;
+        }
+        if (quantity > product.stock) {
+          addToast(`Only ${product.stock} ${product.unit} available in stock!`, 'warning');
+          return;
+        }
+
+        setCart((prev) => {
+          const existing = prev.find((item) => item.product.id === product.id);
+          if (existing) {
+            return prev.map((item) => 
+              item.product.id === product.id 
+                ? { ...item, quantity: item.quantity + quantity }
+                : item
+            );
+          }
+          return [...prev, { product, quantity }];
+        });
+        addToast(`Added ${quantity} ${product.unit} of ${product.name} to Cart.`);
+      };
+
+      return (
+        <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-extrabold text-navy">Material Catalogue</h1>
+            <p className="text-slate-500 text-sm mt-1">Browse and filter high-quality structural steel and cement brands.</p>
+          </div>
+
+          {/* SEARCH, FILTER & SORT PANEL */}
+          <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 mb-8 grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* Search Input */}
+            <div className="relative">
+              <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400"></i>
+              <input 
+                type="text" 
+                placeholder="Search steel, cement, brand..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full bg-slate-50 rounded-xl pl-10 pr-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100"
+              />
+            </div>
+
+            {/* Category Filter */}
+            <div>
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100"
+              >
+                <option value="" disabled>Category</option>
+                {categories.map((c) => (
+                  <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Brand Filter */}
+            <div>
+              <select
+                value={selectedBrand}
+                onChange={(e) => setSelectedBrand(e.target.value)}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100"
+              >
+                <option value="" disabled>Brand</option>
+                {brands.map((b) => (
+                  <option key={b} value={b}>{b === 'All' ? 'All Brands' : b}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Sort Dropdown */}
+            <div>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100"
+              >
+                <option value="name-asc">Sort: A to Z</option>
+                <option value="name-desc">Sort: Z to A</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          {/* CATALOGUE GRID */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((p) => {
+                const isLowStock = p.stock <= p.lowStock;
+                return (
+                  <div key={p.id} className="bg-white rounded-2xl overflow-hidden shadow-premium border border-slate-100 hover:shadow-lg transition-all duration-300 flex flex-col justify-between">
+                    <div>
+                      <div className="h-44 w-full p-4 bg-slate-55 flex items-center justify-center relative">
+                        <ProductImage type={p.image} />
+                        {isLowStock && (
+                          <span className="absolute top-3 right-3 bg-yellow-500 text-navy font-bold text-[10px] uppercase px-2 py-0.5 rounded shadow">
+                            {p.stock === 0 ? 'Out of Stock' : 'Low Stock'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-5">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="text-[10px] bg-slate-100 text-navy font-bold px-2 py-0.5 rounded uppercase">{p.brand}</span>
+                          <span className="text-xs text-slate-500 font-semibold">{p.grade}</span>
+                        </div>
+                        <h3 className="font-display font-bold text-base text-navy line-clamp-1 mb-2">{p.name}</h3>
+                        
+                        <div className="flex items-center gap-1.5 mb-4">
+                          <span className={`w-2.5 h-2.5 rounded-full ${p.stock > p.lowStock ? 'bg-green-500' : p.stock > 0 ? 'bg-yellow-500' : 'bg-red-500'}`}></span>
+                          <span className="text-xs text-slate-500">Stock: <strong className="text-navy">{p.stock.toLocaleString('en-IN')} {p.unit}</strong></span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-5 border-t border-slate-50 bg-slate-50/50 flex flex-col gap-2">
+                      <div className="flex justify-between items-baseline mb-2">
+                        <span className="text-xs text-slate-400">Live Price</span>
+                        <span className="font-display font-extrabold text-navy text-lg">
+                          ₹{p.price.toLocaleString('en-IN')}<span className="text-xs font-normal text-slate-500">/{p.unit}</span>
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => setSelectedProductId(p.id)}
+                          className="bg-slate-200 hover:bg-slate-35 text-navy font-semibold text-xs py-2 px-3 rounded-lg transition-colors text-center"
+                        >
+                          Specs
+                        </button>
+                        <button
+                          onClick={() => handleAddToCart(p, 1)}
+                          disabled={p.stock <= 0}
+                          className={`text-white font-bold text-xs py-2 px-3 rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                            p.stock > 0 ? 'bg-teal hover:bg-teal-dark shadow-glow' : 'bg-slate-300 cursor-not-allowed'
+                          }`}
+                        >
+                          <i className="fa-solid fa-cart-plus"></i>Add
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="col-span-full bg-white rounded-2xl p-12 text-center border border-slate-100">
+                <i className="fa-solid fa-magnifying-glass-minus text-4xl text-slate-300 mb-4"></i>
+                <h4 className="font-display font-bold text-lg text-navy mb-1">No Materials Found</h4>
+                <p className="text-slate-500 text-sm">Adjust search terms or reset category and brand filters.</p>
+              </div>
+            )}
+          </div>
+
+          {/* DYNAMIC COMPONENT: PRODUCT DETAILS MODAL */}
+          {selectedProduct && (
+            <div className="fixed inset-0 z-50 bg-navy/60 backdrop-blur-sm flex items-center justify-center p-4">
+              <div className="bg-white rounded-3xl max-w-2xl w-full shadow-premium border border-slate-100 overflow-hidden relative">
+                <button 
+                  onClick={() => setSelectedProductId(null)}
+                  className="absolute top-4 right-4 text-slate-400 hover:text-navy text-lg p-2 transition-colors z-10"
+                >
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+                <div className="md:flex">
+                  <div className="md:w-1/2 p-6 bg-slate-50 flex items-center justify-center">
+                    <div className="w-56 h-56">
+                      <ProductImage type={selectedProduct.image} />
+                    </div>
+                  </div>
+                  <div className="md:w-1/2 p-6 flex flex-col justify-between">
+                    <div>
+                      <div className="flex gap-2 mb-2">
+                        <span className="bg-teal/15 text-teal text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{selectedProduct.category}</span>
+                        <span className="bg-slate-100 text-navy text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">{selectedProduct.brand}</span>
+                      </div>
+                      <h2 className="font-display font-bold text-xl text-navy mb-2">{selectedProduct.name}</h2>
+                      <p className="text-xs text-slate-500 leading-relaxed mb-4">{selectedProduct.spec}</p>
+                      
+                      <div className="grid grid-cols-2 gap-4 mb-4 border-y border-slate-100 py-3 text-xs">
+                        <div>
+                          <span className="text-slate-400 block uppercase font-semibold">Grade</span>
+                          <span className="font-semibold text-navy">{selectedProduct.grade}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block uppercase font-semibold">Availability</span>
+                          <span className={`font-semibold ${selectedProduct.stock > selectedProduct.lowStock ? 'text-green-600' : 'text-yellow-600'}`}>
+                            {selectedProduct.stock.toLocaleString('en-IN')} {selectedProduct.unit}s
+                          </span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block uppercase font-semibold">Live Base Price</span>
+                          <span className="font-display font-extrabold text-teal">₹{selectedProduct.price.toLocaleString('en-IN')}/{selectedProduct.unit}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400 block uppercase font-semibold">Logistics Estimate</span>
+                          <span className="font-semibold text-navy">24 - 48 Hours Dispatch</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50">
+                        <button 
+                          onClick={() => {
+                            const val = document.getElementById('qty-input').value;
+                            if (val > 1) document.getElementById('qty-input').value = parseInt(val) - 1;
+                          }}
+                          className="px-3 py-2 text-slate-500 hover:bg-slate-200 transition-colors"
+                        >
+                          -
+                        </button>
+                        <input 
+                          type="number" 
+                          id="qty-input" 
+                          defaultValue="1" 
+                          min="1"
+                          max={selectedProduct.stock}
+                          className="w-12 text-center bg-transparent focus:outline-none text-sm font-bold text-navy" 
+                        />
+                        <button 
+                          onClick={() => {
+                            const val = document.getElementById('qty-input').value;
+                            if (val < selectedProduct.stock) document.getElementById('qty-input').value = parseInt(val) + 1;
+                          }}
+                          className="px-3 py-2 text-slate-500 hover:bg-slate-200 transition-colors"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const quantity = parseInt(document.getElementById('qty-input').value) || 1;
+                          handleAddToCart(selectedProduct, quantity);
+                          setSelectedProductId(null);
+                        }}
+                        disabled={selectedProduct.stock <= 0}
+                        className={`flex-grow font-bold text-xs py-3 rounded-xl transition-all duration-300 flex items-center justify-center gap-1.5 shadow-glow text-white ${
+                          selectedProduct.stock > 0 ? 'bg-teal hover:bg-teal-dark' : 'bg-slate-300 cursor-not-allowed'
+                        }`}
+                      >
+                        <i className="fa-solid fa-cart-shopping"></i> Add To Cart
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </section>
+      );
+    }
+
+    // --- COMPONENT: SHOPPING CART ---
+    function CartPage({ cart, setCart, navigate, currentUser, addToast }) {
+      const subtotal = useMemo(() => {
+        return cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+      }, [cart]);
+
+      // standard B2B construction materials GST in India is 18%
+      const gst = useMemo(() => Math.round(subtotal * 0.18), [subtotal]);
+      const total = useMemo(() => subtotal + gst, [subtotal, gst]);
+
+      // State for delivery scheduling (minimum 2 days ahead)
+      const minDate = useMemo(() => {
+        const d = new Date();
+        d.setDate(d.getDate() + 2);
+        return d.toISOString().split('T')[0];
+      }, []);
+
+      const [deliveryDate, setDeliveryDate] = useState(minDate);
+
+      // Handle item quantity updates
+      const updateQty = (id, change) => {
+        setCart((prev) => 
+          prev.map((item) => {
+            if (item.product.id === id) {
+              const newQty = item.quantity + change;
+              if (newQty <= 0) return null;
+              if (newQty > item.product.stock) {
+                addToast(`Only ${item.product.stock} ${item.product.unit}s available in warehouse!`, 'warning');
+                return item;
+              }
+              return { ...item, quantity: newQty };
+            }
+            return item;
+          }).filter(Boolean)
+        );
+      };
+
+      // Handle checkout click
+      const handleCheckout = () => {
+        if (!currentUser) {
+          addToast('Please login or register to complete checkout.', 'warning');
+          navigate('auth');
+          return;
+        }
+        localStorage.setItem('st_scheduled_delivery', deliveryDate);
+        navigate('checkout');
+      };
+
+      return (
+        <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-extrabold text-navy">Shopping Cart</h1>
+            <p className="text-slate-500 text-sm mt-1">Review scheduled logistics and price calculation summaries.</p>
+          </div>
+
+          {cart.length > 0 ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              
+              {/* CART LIST */}
+              <div className="lg:col-span-2 space-y-4">
+                {cart.map((item) => (
+                  <div key={item.product.id} className="bg-white rounded-2xl p-5 shadow-premium border border-slate-100 flex items-center justify-between gap-4">
+                    <div className="w-16 h-16 flex-shrink-0 bg-slate-50 flex items-center justify-center p-2 rounded-lg">
+                      <ProductImage type={item.product.image} />
+                    </div>
+                    
+                    <div className="flex-grow">
+                      <span className="text-[10px] bg-slate-100 text-navy font-bold px-2 py-0.5 rounded uppercase">{item.product.brand}</span>
+                      <h3 className="font-display font-bold text-sm text-navy mt-1">{item.product.name}</h3>
+                      <span className="text-xs text-slate-400 block mt-0.5">Base Price: ₹{item.product.price.toLocaleString('en-IN')}/{item.product.unit}</span>
+                    </div>
+
+                    {/* Quantity Selector */}
+                    <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0">
+                      <button 
+                        onClick={() => updateQty(item.product.id, -1)}
+                        className="px-2.5 py-1 text-slate-500 hover:bg-slate-200 transition-colors"
+                      >
+                        -
+                      </button>
+                      <span className="w-10 text-center text-xs font-bold text-navy">{item.quantity}</span>
+                      <button 
+                        onClick={() => updateQty(item.product.id, 1)}
+                        className="px-2.5 py-1 text-slate-500 hover:bg-slate-200 transition-colors"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {/* Subtotal */}
+                    <div className="text-right flex-shrink-0 min-w-[100px]">
+                      <span className="text-[10px] text-slate-400 block">Subtotal</span>
+                      <span className="font-display font-bold text-sm text-navy">
+                        ₹{(item.product.price * item.quantity).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+
+                    {/* Remove */}
+                    <button 
+                      onClick={() => updateQty(item.product.id, -item.quantity)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg transition-colors flex-shrink-0"
+                    >
+                      <i className="fa-solid fa-trash-can"></i>
+                    </button>
+                  </div>
+                ))}
+
+                {/* Back button */}
+                <button 
+                  onClick={() => navigate('catalog')}
+                  className="text-teal font-semibold text-sm hover:text-teal-dark flex items-center gap-1.5 transition-colors"
+                >
+                  <i className="fa-solid fa-arrow-left-long"></i> Add More Materials
+                </button>
+              </div>
+
+              {/* SUMMARY & SCHEDULING CARD */}
+              <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 h-fit space-y-6">
+                <div>
+                  <h3 className="font-display font-bold text-base text-navy border-b border-slate-100 pb-3 mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-truck-ramp-box text-teal"></i> Delivery Scheduling
+                  </h3>
+                  <label className="text-xs text-slate-400 font-semibold uppercase block mb-1.5">Preferred Delivery Date</label>
+                  <input 
+                    type="date" 
+                    min={minDate}
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                    className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                  />
+                  <p className="text-[10px] text-slate-400 mt-2">
+                    *Logistics scheduling must be booked at least 48 hours in advance to organize secure flatbed heavy trucks.
+                  </p>
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <div>
+                  <h3 className="font-display font-bold text-base text-navy mb-4">Invoice Calculation Summary</h3>
+                  <div className="space-y-2.5 text-sm">
+                    <div className="flex justify-between text-slate-500">
+                      <span>Materials Net Subtotal</span>
+                      <span className="font-semibold text-navy">₹{subtotal.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-500">
+                      <span>GST (18% B2B)</span>
+                      <span className="font-semibold text-navy">₹{gst.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div className="flex justify-between text-slate-500">
+                      <span>Logistics Transport Charge</span>
+                      <span className="font-semibold text-green-600">FREE</span>
+                    </div>
+                    <hr className="border-slate-100 my-2" />
+                    <div className="flex justify-between text-base font-display font-extrabold text-navy">
+                      <span>Grand Total (incl. tax)</span>
+                      <span className="text-teal">₹{total.toLocaleString('en-IN')}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={handleCheckout}
+                  className="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-glow text-center text-sm"
+                >
+                  Proceed to Checkout <i className="fa-solid fa-arrow-right-long ml-1"></i>
+                </button>
+              </div>
+
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl p-16 text-center border border-slate-100 max-w-lg mx-auto">
+              <i className="fa-solid fa-cart-flatbed text-5xl text-slate-300 mb-4"></i>
+              <h4 className="font-display font-bold text-lg text-navy mb-1">Your Shopping Cart is Empty</h4>
+              <p className="text-slate-500 text-sm mb-6">Select construction rebars or concrete cement bags first.</p>
+              <button 
+                onClick={() => navigate('catalog')}
+                className="bg-navy hover:bg-navy-light text-white font-bold px-6 py-3 rounded-xl transition-colors inline-block text-sm"
+              >
+                Go to Catalogue
+              </button>
+            </div>
+          )}
+
+        </section>
+      );
+    }
+
+    // --- COMPONENT: CHECKOUT PAGE ---
+    function CheckoutPage({ cart, setCart, currentUser, orders, setOrders, products, setProducts, navigate, addToast, setSelectedOrderForInvoice }) {
+      const scheduledDate = localStorage.getItem('st_scheduled_delivery') || '';
+      
+      const subtotal = useMemo(() => cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0), [cart]);
+      const gst = useMemo(() => Math.round(subtotal * 0.18), [subtotal]);
+      const total = useMemo(() => subtotal + gst, [subtotal]);
+
+      // Form State
+      const [name, setName] = useState(currentUser?.name || '');
+      const [mobile, setMobile] = useState(currentUser?.mobile || '');
+      const [gstin, setGstin] = useState(currentUser?.gstin || '');
+      const [address, setAddress] = useState(currentUser?.address || '');
+
+      const handleSubmitOrder = (e) => {
+        e.preventDefault();
+        if (cart.length === 0) {
+          addToast('Cart is empty!', 'error');
+          navigate('catalog');
+          return;
+        }
+
+        const orderId = 'ORD-' + Math.floor(10000 + Math.random() * 90000);
+        
+        const newOrder = {
+          id: orderId,
+          customerName: name,
+          customerMobile: mobile,
+          customerGST: gstin || 'N/A',
+          deliveryAddress: address,
+          date: new Date().toISOString().split('T')[0],
+          deliveryDate: scheduledDate,
+          items: cart.map(item => ({
+            productId: item.product.id,
+            name: item.product.name,
+            quantity: item.quantity,
+            price: item.product.price,
+            unit: item.product.unit
+          })),
+          subtotal,
+          gst,
+          total,
+          paymentMethod: 'WhatsApp',
+          paymentStatus: 'Pending',
+          deliveryStatus: 'Order Confirmed',
+          trackingHistory: [
+            { 
+              status: 'Order Confirmed', 
+              time: new Date().toLocaleDateString('en-US') + ' ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }), 
+              comment: `Order confirmed. Complete details shared via WhatsApp.` 
+            }
+          ]
+        };
+
+        // Subtract stock quantities
+        const updatedProducts = products.map((p) => {
+          const cartItem = cart.find((item) => item.product.id === p.id);
+          if (cartItem) {
+            return { ...p, stock: Math.max(0, p.stock - cartItem.quantity) };
+          }
+          return p;
+        });
+
+        // Format items list for WhatsApp message
+        const itemsText = cart.map(item => 
+          `• ${item.product.name} (${item.quantity} ${item.product.unit}s x ₹${item.product.price.toLocaleString('en-IN')}) = ₹${(item.product.price * item.quantity).toLocaleString('en-IN')}`
+        ).join('\n');
+
+        // Create WhatsApp message
+        const message = `Hello Sai Teja Traders! I would like to place a bulk order.
+
+*Order Details:*
+• *Order ID:* ${orderId}
+• *Authorized Name:* ${name}
+• *Mobile Contact:* ${mobile}
+• *GSTIN:* ${gstin || 'N/A'}
+• *Site Delivery Address:* ${address}
+• *Scheduled Delivery Date:* ${scheduledDate || 'None Selected'}
+
+*Items Ordered:*
+${itemsText}
+
+• *Subtotal:* ₹${subtotal.toLocaleString('en-IN')}
+• *GST (18%):* ₹${gst.toLocaleString('en-IN')}
+• *Total Tax-Paid Bill:* ₹${total.toLocaleString('en-IN')}
+
+Please confirm the order and share payment instructions. Thank you!`;
+
+        // WhatsApp URL (using the business number +91 93478 06042)
+        const whatsappUrl = `https://wa.me/919347806042?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, '_blank');
+
+        // Save states
+        setProducts(updatedProducts);
+        setOrders((prev) => [newOrder, ...prev]);
+        setCart([]);
+        addToast(`Order ${orderId} placed successfully! Sharing on WhatsApp...`);
+        
+        // Show Invoice Immediately
+        setSelectedOrderForInvoice(newOrder);
+        navigate('customer');
+      };
+
+      return (
+        <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-extrabold text-navy">Checkout</h1>
+            <p className="text-slate-500 text-sm mt-1">Provide delivery specifications and complete safe payment.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* CHECKOUT FORM */}
+            <div className="lg:col-span-2">
+              <form onSubmit={handleSubmitOrder} className="bg-white rounded-2xl p-6 sm:p-8 shadow-premium border border-slate-100 space-y-6">
+                <h3 className="font-display font-bold text-lg text-navy border-b border-slate-100 pb-3 mb-2 flex items-center gap-2">
+                  <i className="fa-solid fa-address-card text-teal"></i> B2B Customer & Shipping Details
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-semibold uppercase text-slate-400">
+                  <div>
+                    <label className="block mb-1.5">Authorized Name *</label>
+                    <input 
+                      type="text" 
+                      required
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                      placeholder="e.g. Bharath Rao"
+                    />
+                  </div>
+                  <div>
+                    <label className="block mb-1.5">Mobile Contact *</label>
+                    <input 
+                      type="tel" 
+                      required
+                      value={mobile}
+                      onChange={(e) => setMobile(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                      placeholder="e.g. 9876543210"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-xs font-semibold uppercase text-slate-400">
+                  <label className="block mb-1.5">GST Identification Number (GSTIN) <span className="text-[10px] text-slate-400">(Optional for Input Credit)</span></label>
+                  <input 
+                    type="text" 
+                    value={gstin}
+                    onChange={(e) => setGstin(e.target.value)}
+                    className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium uppercase"
+                    placeholder="e.g. 36AAAAA1111A1Z1"
+                  />
+                </div>
+
+                <div className="text-xs font-semibold uppercase text-slate-400">
+                  <label className="block mb-1.5">Site Delivery Address *</label>
+                  <textarea 
+                    rows="3"
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                    placeholder="Provide full site address with pin code..."
+                  />
+                </div>
+
+                <div className="bg-green-50 rounded-2xl p-5 border border-green-100 flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-lg flex-shrink-0">
+                    <i className="fa-brands fa-whatsapp"></i>
+                  </div>
+                  <div>
+                    <h4 className="font-display font-bold text-sm text-green-800">Order via WhatsApp</h4>
+                    <p className="text-xs text-green-600/90 leading-relaxed mt-0.5">
+                      Confirming your order will generate your GST invoice, save it to your dashboard, and redirect you to WhatsApp where you can share details directly with our team for final confirmation and dispatch.
+                    </p>
+                  </div>
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-glow text-center text-sm uppercase tracking-wider flex items-center justify-center gap-2"
+                >
+                  <i className="fa-brands fa-whatsapp text-lg"></i> Confirm Order & Share on WhatsApp
+                </button>
+              </form>
+            </div>
+
+            {/* BILLING PREVIEW */}
+            <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 h-fit space-y-6">
+              <div>
+                <h3 className="font-display font-bold text-base text-navy border-b border-slate-100 pb-3 mb-4">Logistics Summary</h3>
+                <div className="flex justify-between items-center text-sm mb-2">
+                  <span className="text-slate-400">Scheduled Date</span>
+                  <span className="font-bold text-navy">{scheduledDate || 'None Selected'}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Items In Shipment</span>
+                  <span className="font-bold text-navy">{cart.reduce((sum, item) => sum + item.quantity, 0)} Units</span>
+                </div>
+              </div>
+
+              <hr className="border-slate-100" />
+
+              <div>
+                <h3 className="font-display font-bold text-base text-navy mb-4">Item Details</h3>
+                <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+                  {cart.map((item) => (
+                    <div key={item.product.id} className="flex justify-between items-start gap-2 text-xs border-b border-slate-50 pb-2">
+                      <div>
+                        <span className="font-bold text-navy block">{item.product.name}</span>
+                        <span className="text-slate-400 font-medium">{item.quantity} {item.product.unit} x ₹{item.product.price}</span>
+                      </div>
+                      <span className="font-semibold text-navy">₹{(item.product.price * item.quantity).toLocaleString('en-IN')}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <hr className="border-slate-100" />
+
+              <div className="space-y-2 text-xs font-semibold text-slate-500">
+                <div className="flex justify-between">
+                  <span>Materials Subtotal</span>
+                  <span className="text-navy font-bold">₹{subtotal.toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>CGST (9%)</span>
+                  <span className="text-navy font-bold">₹{(gst/2).toLocaleString('en-IN')}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>SGST (9%)</span>
+                  <span className="text-navy font-bold">₹{(gst/2).toLocaleString('en-IN')}</span>
+                </div>
+                <hr className="border-slate-100 my-2" />
+                <div className="flex justify-between text-sm font-display font-extrabold text-navy">
+                  <span>Total Payable</span>
+                  <span className="text-teal">₹{total.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+        </section>
+      );
+    }
+
+    // --- COMPONENT: ORDER TRACKING ---
+    function TrackingPage({ orders, trackingOrderId, setTrackingOrderId }) {
+      const [searchQuery, setSearchQuery] = useState(trackingOrderId || '');
+      const [matchedOrder, setMatchedOrder] = useState(null);
+      const [searched, setSearched] = useState(false);
+
+      useEffect(() => {
+        if (trackingOrderId) {
+          const ord = orders.find((o) => o.id === trackingOrderId);
+          setMatchedOrder(ord || null);
+          setSearched(true);
+        }
+      }, [trackingOrderId, orders]);
+
+      const handleSearch = (e) => {
+        e.preventDefault();
+        setSearched(true);
+        const ord = orders.find((o) => o.id.toUpperCase() === searchQuery.trim().toUpperCase());
+        setMatchedOrder(ord || null);
+        if (ord) {
+          setTrackingOrderId(ord.id);
+        }
+      };
+
+      const steps = ['Order Confirmed', 'Processing', 'Dispatched', 'Out for Delivery', 'Delivered'];
+      
+      const currentStepIdx = matchedOrder 
+        ? steps.indexOf(matchedOrder.deliveryStatus) 
+        : -1;
+
+      return (
+        <section className="py-12 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h1 className="text-3xl font-display font-extrabold text-navy">Logistics Delivery Tracking</h1>
+            <p className="text-slate-500 text-sm mt-1">Track material dispatches from the warehouse to your site layout.</p>
+          </div>
+
+          {/* SEARCH INPUT */}
+          <form onSubmit={handleSearch} className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 mb-8 flex gap-3">
+            <input 
+              type="text" 
+              placeholder="Enter B2B Order ID (e.g. ORD-98721)"
+              required
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-grow bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-mono font-semibold"
+            />
+            <button 
+              type="submit"
+              className="bg-teal hover:bg-teal-dark text-white font-bold px-6 py-3 rounded-xl transition-colors shadow-glow text-xs uppercase tracking-wider flex items-center gap-1.5"
+            >
+              <i className="fa-solid fa-location-crosshairs"></i> Track
+            </button>
+          </form>
+
+          {/* TRACKING DETAILS DISPLAY */}
+          {searched && matchedOrder ? (
+            <div className="space-y-6">
+              
+              {/* STATUS SUMMARY */}
+              <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 md:flex justify-between items-center">
+                <div>
+                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Order ID</span>
+                  <span className="font-mono font-bold text-navy text-sm">{matchedOrder.id}</span>
+                </div>
+                <div className="mt-4 md:mt-0">
+                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Expected Delivery</span>
+                  <span className="font-bold text-navy text-sm">{matchedOrder.deliveryDate}</span>
+                </div>
+                <div className="mt-4 md:mt-0">
+                  <span className="text-[10px] text-slate-400 font-semibold block uppercase">Current Stage</span>
+                  <span className="bg-teal/10 text-teal font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider block w-fit mt-0.5">
+                    {matchedOrder.deliveryStatus}
+                  </span>
+                </div>
+              </div>
+
+              {/* TIMELINE */}
+              <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-premium border border-slate-100">
+                <h3 className="font-display font-bold text-base text-navy border-b border-slate-100 pb-3 mb-6">Dispatch Milestones</h3>
+                
+                <div className="relative pl-8 border-l-2 border-slate-200 ml-3.5 space-y-8">
+                  {steps.map((step, idx) => {
+                    const isDone = idx <= currentStepIdx;
+                    const isCurrent = idx === currentStepIdx;
+                    const milestoneDetails = matchedOrder.trackingHistory.find(h => h.status === step);
+
+                    return (
+                      <div key={step} className="relative">
+                        {/* Bullet circle */}
+                        <div className={`absolute -left-[45px] top-0 w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs transition-all ${
+                          isCurrent 
+                            ? 'bg-teal border-teal text-white shadow-glow pulse-glow' 
+                            : isDone 
+                            ? 'bg-navy border-navy text-white' 
+                            : 'bg-white border-slate-300 text-slate-400'
+                        }`}>
+                          {isDone ? <i className="fa-solid fa-check"></i> : <span>{idx + 1}</span>}
+                        </div>
+
+                        <div>
+                          <h4 className={`text-sm font-bold ${isCurrent ? 'text-teal' : isDone ? 'text-navy' : 'text-slate-400'}`}>
+                            {step}
+                          </h4>
+                          {milestoneDetails ? (
+                            <div className="mt-1">
+                              <p className="text-xs text-slate-500">{milestoneDetails.comment}</p>
+                              <span className="text-[10px] text-slate-400 mt-0.5 block">{milestoneDetails.time}</span>
+                            </div>
+                          ) : (
+                            <p className="text-xs text-slate-350">Awaiting status milestone trigger...</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+            </div>
+          ) : searched ? (
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100">
+              <i className="fa-solid fa-circle-question text-4xl text-slate-300 mb-4"></i>
+              <h4 className="font-display font-bold text-lg text-navy mb-1">Order Not Found</h4>
+              <p className="text-slate-500 text-sm">Please verify the Order ID (e.g. ORD-98721). Try booking an order first.</p>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-100">
+              <i className="fa-solid fa-truck-moving text-4xl text-slate-300 mb-4"></i>
+              <h4 className="font-display font-bold text-lg text-navy mb-1">Awaiting Tracking Query</h4>
+              <p className="text-slate-500 text-sm">Search with a valid invoice/order ID above to view live logistics dispatch status.</p>
+            </div>
+          )}
+        </section>
+      );
+    }
+
+    // --- COMPONENT: CUSTOMER DASHBOARD ---
+    function CustomerDashboard({ currentUser, orders, navigate, setTrackingOrderId, setSelectedOrderForInvoice }) {
+      const myOrders = useMemo(() => {
+        if (!currentUser) return [];
+        // Show orders that match name or mobile contact or all orders for demo if none matches
+        return orders.filter(o => o.customerMobile === currentUser.mobile || o.customerName.toLowerCase() === currentUser.name.toLowerCase() || o.customerMobile === '9876543210');
+      }, [currentUser, orders]);
+
+      return (
+        <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-extrabold text-navy">Customer Dashboard</h1>
+            <p className="text-slate-500 text-sm mt-1">Manage profile addresses, access digital invoices, and track orders.</p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* PROFILE SIDEBAR */}
+            <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 h-fit space-y-6">
+              <div className="text-center">
+                <div className="w-16 h-16 rounded-full bg-teal text-white flex items-center justify-center font-display font-black text-2xl mx-auto mb-3 shadow">
+                  {currentUser?.name[0].toUpperCase()}
+                </div>
+                <h3 className="font-display font-bold text-base text-navy">{currentUser?.name}</h3>
+                <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">{currentUser?.role} account</span>
+              </div>
+
+              <hr className="border-slate-100" />
+
+              <div className="space-y-3.5 text-xs text-slate-500">
+                <div>
+                  <span className="text-slate-450 block uppercase font-bold mb-0.5">Email</span>
+                  <span className="text-navy font-semibold">{currentUser?.email}</span>
+                </div>
+                <div>
+                  <span className="text-slate-450 block uppercase font-bold mb-0.5">Mobile Contact</span>
+                  <span className="text-navy font-semibold">{currentUser?.mobile || '9876543210'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-450 block uppercase font-bold mb-0.5">Corporate GSTIN</span>
+                  <span className="text-navy font-semibold uppercase">{currentUser?.gstin || 'Not Provided (B2C Order)'}</span>
+                </div>
+                <div>
+                  <span className="text-slate-450 block uppercase font-bold mb-0.5">Default Shipping Address</span>
+                  <span className="text-navy font-semibold">{currentUser?.address || 'Site Address not configured.'}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ORDER HISTORY */}
+            <div className="lg:col-span-2 space-y-4">
+              <h3 className="font-display font-bold text-lg text-navy mb-4 flex items-center gap-2">
+                <i className="fa-solid fa-list-check text-teal"></i> Purchase Order History
+              </h3>
+
+              {myOrders.length > 0 ? (
+                myOrders.map((o) => (
+                  <div key={o.id} className="bg-white rounded-2xl p-5 shadow-premium border border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <span className="font-mono font-bold text-sm text-navy">{o.id}</span>
+                        <span className="text-xs text-slate-400">Placed: {o.date}</span>
+                      </div>
+                      
+                      {/* Products preview text */}
+                      <p className="text-xs text-slate-500 mt-2 font-medium">
+                        {o.items.map((it) => `${it.quantity} ${it.unit} x ${it.name}`).join(', ')}
+                      </p>
+
+                      <div className="flex items-center gap-4 mt-3">
+                        <span className="font-display font-extrabold text-navy text-sm">
+                          ₹{o.total.toLocaleString('en-IN')}
+                        </span>
+                        <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
+                          o.deliveryStatus === 'Delivered' 
+                            ? 'bg-green-100 text-green-700' 
+                            : o.deliveryStatus === 'Processing' 
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-teal/10 text-teal'
+                        }`}>
+                          {o.deliveryStatus}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 w-full md:w-auto">
+                      <button 
+                        onClick={() => { setTrackingOrderId(o.id); navigate('tracking'); }}
+                        className="flex-grow md:flex-none bg-slate-100 hover:bg-slate-200 text-navy text-xs font-semibold px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center gap-1"
+                      >
+                        <i className="fa-solid fa-map-location-dot"></i> Track
+                      </button>
+                      <button 
+                        onClick={() => setSelectedOrderForInvoice(o)}
+                        className="flex-grow md:flex-none bg-teal hover:bg-teal-dark text-white text-xs font-semibold px-4 py-2.5 rounded-lg shadow-glow transition-colors flex items-center justify-center gap-1"
+                      >
+                        <i className="fa-solid fa-file-invoice-dollar"></i> Invoice
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="bg-white rounded-2xl p-12 text-center border border-slate-100">
+                  <i className="fa-solid fa-receipt text-4xl text-slate-300 mb-4"></i>
+                  <h4 className="font-display font-bold text-lg text-navy mb-1">No Orders Placed Yet</h4>
+                  <p className="text-slate-500 text-sm">You haven't ordered structural materials yet. Visit the catalog to get started.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    // --- COMPONENT: ADMIN DASHBOARD ---
+    function AdminDashboard({ products, setProducts, orders, setOrders, pricesHistory, setPricesHistory, addToast, setSelectedOrderForInvoice, navigate }) {
+      const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'inventory' | 'prices' | 'analytics'
+      const [newPriceValue, setNewPriceValue] = useState('');
+      const [selectedPriceCat, setSelectedPriceCat] = useState('Steel TMT Bars');
+
+      // Admin stats
+      const totalSales = useMemo(() => orders.reduce((sum, o) => sum + o.total, 0), [orders]);
+      const revenue = useMemo(() => orders.reduce((sum, o) => sum + o.subtotal, 0), [orders]);
+      const lowStockAlerts = useMemo(() => products.filter(p => p.stock <= p.lowStock).length, [products]);
+
+      // Handle price updates
+      const handleUpdatePrice = (e) => {
+        e.preventDefault();
+        const price = parseInt(newPriceValue);
+        if (!price || price <= 0) {
+          addToast('Please enter a valid price!', 'error');
+          return;
+        }
+
+        // Update price history
+        const updatedHistory = pricesHistory.map((item) => {
+          if (item.category === selectedPriceCat) {
+            return {
+              ...item,
+              previousPrice: item.currentPrice,
+              currentPrice: price,
+              lastUpdated: 'Just Now'
+            };
+          }
+          return item;
+        });
+
+        // Update product prices in that category
+        const updatedProducts = products.map((prod) => {
+          if (prod.category === selectedPriceCat) {
+            // For steel TMT / Binding wire, update base tons. For Cement, let's update proportional cement bag prices.
+            // Tata rebar vs JSW rebar are different, so let's adjust by percentage change or set directly
+            const oldCatPrice = pricesHistory.find(i => i.category === selectedPriceCat).currentPrice;
+            const multiplier = price / oldCatPrice;
+            return {
+              ...prod,
+              price: Math.round(prod.price * multiplier)
+            };
+          }
+          return prod;
+        });
+
+        setPricesHistory(updatedHistory);
+        setProducts(updatedProducts);
+        setNewPriceValue('');
+        addToast(`Base prices for ${selectedPriceCat} updated successfully system-wide.`);
+      };
+
+      // Handle order status change
+      const handleOrderStatusChange = (orderId, newStatus) => {
+        const commentForStep = {
+          'Order Confirmed': 'Order confirmed via selected payment gateway.',
+          'Processing': 'Materials allocated and packed at logistics yard.',
+          'Dispatched': 'Flatbed heavy truck left Jeedimetla logistics warehouse.',
+          'Out for Delivery': 'Vehicle arrived at customer local delivery perimeter.',
+          'Delivered': 'Shipment unloaded. Digital proof of delivery receipt registered.'
+        };
+
+        const updatedOrders = orders.map((o) => {
+          if (o.id === orderId) {
+            // Check if step already exists in trackingHistory
+            const exists = o.trackingHistory.some((h) => h.status === newStatus);
+            let updatedHistory = [...o.trackingHistory];
+            if (!exists) {
+              updatedHistory.push({
+                status: newStatus,
+                time: new Date().toLocaleDateString('en-US') + ' ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                comment: commentForStep[newStatus] || 'Status changed by Admin.'
+              });
+            }
+            return {
+              ...o,
+              deliveryStatus: newStatus,
+              trackingHistory: updatedHistory
+            };
+          }
+          return o;
+        });
+
+        setOrders(updatedOrders);
+        addToast(`Order ${orderId} status changed to ${newStatus}.`);
+      };
+
+      // Handle inventory stock addition
+      const handleAddStock = (prodId, amt) => {
+        const val = parseInt(amt);
+        if (!val || val <= 0) return;
+        const updated = products.map((p) => {
+          if (p.id === prodId) {
+            return { ...p, stock: p.stock + val };
+          }
+          return p;
+        });
+        setProducts(updated);
+        addToast(`Added ${val} units of stock.`);
+      };
+
+      return (
+        <section className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-display font-extrabold text-navy">Admin Management Console</h1>
+            <p className="text-slate-500 text-sm mt-1">Manage bulk stocks, adjust live market prices, and process B2B invoices.</p>
+          </div>
+
+          {/* DASHBOARD ANALYTICS PANEL */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Total Sales (incl. GST)</span>
+              <span className="font-display font-black text-2xl text-navy block mt-1">₹{totalSales.toLocaleString('en-IN')}</span>
+              <span className="text-xs text-green-600 font-bold block mt-1"><i className="fa-solid fa-chevron-up"></i> +12% vs last week</span>
+            </div>
+            
+            <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Material Net Revenue</span>
+              <span className="font-display font-black text-2xl text-navy block mt-1">₹{revenue.toLocaleString('en-IN')}</span>
+              <span className="text-xs text-slate-450 block mt-1">Excl. 18% dynamic GST</span>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Active Orders</span>
+              <span className="font-display font-black text-2xl text-teal block mt-1">
+                {orders.filter(o => o.deliveryStatus !== 'Delivered').length}
+              </span>
+              <span className="text-xs text-slate-450 block mt-1">Awaiting dispatch fulfillment</span>
+            </div>
+
+            <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Low Stock Alerts</span>
+              <span className={`font-display font-black text-2xl block mt-1 ${lowStockAlerts > 0 ? 'text-yellow-600' : 'text-green-600'}`}>
+                {lowStockAlerts}
+              </span>
+              <span className="text-xs text-slate-450 block mt-1">Warehouse replenishment alerts</span>
+            </div>
+          </div>
+
+          {/* TABS NAVIGATION */}
+          <div className="flex border-b border-slate-200 mb-8 overflow-x-auto gap-4">
+            {[
+              { id: 'orders', label: 'Order Processing', icon: 'fa-truck-fast' },
+              { id: 'inventory', label: 'Inventory Stocks', icon: 'fa-warehouse' },
+              { id: 'prices', label: 'Price Controller', icon: 'fa-coins' }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`py-3 px-4 font-display font-semibold text-sm border-b-2 transition-all flex items-center gap-2 whitespace-nowrap ${
+                  activeTab === tab.id 
+                    ? 'border-teal text-teal' 
+                    : 'border-transparent text-slate-400 hover:text-navy'
+                }`}
+              >
+                <i className={`fa-solid ${tab.icon}`}></i> {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* TAB CONTENT: ORDER PROCESSING */}
+          {activeTab === 'orders' && (
+            <div className="space-y-4">
+              {orders.length > 0 ? (
+                orders.map((o) => (
+                  <div key={o.id} className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100 space-y-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-50 pb-3 gap-3">
+                      <div>
+                        <span className="font-mono font-bold text-sm text-navy">{o.id}</span>
+                        <span className="text-xs text-slate-400 block sm:inline sm:ml-3">Customer: <strong>{o.customerName}</strong> ({o.customerMobile})</span>
+                      </div>
+                      
+                      <div className="flex gap-2 items-center w-full md:w-auto">
+                        <label className="text-xs text-slate-400 font-bold uppercase whitespace-nowrap">Status:</label>
+                        <select
+                          value={o.deliveryStatus}
+                          onChange={(e) => handleOrderStatusChange(o.id, e.target.value)}
+                          className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs text-navy font-semibold focus:outline-none focus:ring-1 focus:ring-teal"
+                        >
+                          <option value="Order Confirmed">Order Confirmed</option>
+                          <option value="Processing">Processing</option>
+                          <option value="Dispatched">Dispatched</option>
+                          <option value="Out for Delivery">Out for Delivery</option>
+                          <option value="Delivered">Delivered</option>
+                        </select>
+                        <button
+                          onClick={() => setSelectedOrderForInvoice(o)}
+                          className="bg-teal text-white hover:bg-teal-dark font-bold text-xs py-1.5 px-3 rounded-lg transition-colors flex items-center gap-1.5 shadow"
+                        >
+                          <i className="fa-solid fa-file-pdf"></i> Invoice
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                      <div>
+                        <span className="text-slate-400 block uppercase font-semibold">Delivery Address</span>
+                        <p className="text-navy mt-0.5 leading-relaxed">{o.deliveryAddress}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block uppercase font-semibold">Purchased Items</span>
+                        <ul className="text-navy mt-0.5 list-disc pl-4 space-y-0.5">
+                          {o.items.map((it, idx) => (
+                            <li key={idx}><strong>{it.quantity} {it.unit}</strong> - {it.name}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block uppercase font-semibold">Billing</span>
+                        <div className="text-navy mt-0.5">
+                          <p>Subtotal: ₹{o.subtotal.toLocaleString('en-IN')}</p>
+                          <p>GST: ₹{o.gst.toLocaleString('en-IN')}</p>
+                          <p className="font-bold text-teal mt-0.5">Total: ₹{o.total.toLocaleString('en-IN')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="bg-white rounded-2xl p-12 text-center border border-slate-100">
+                  <h4 className="font-display font-bold text-lg text-navy mb-1">No Orders Registered</h4>
+                  <p className="text-slate-500 text-sm">Waiting for incoming customer transactions...</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB CONTENT: INVENTORY STOCKS */}
+          {activeTab === 'inventory' && (
+            <div className="bg-white rounded-2xl shadow-premium border border-slate-100 overflow-hidden">
+              <table className="w-full text-left border-collapse text-xs md:text-sm">
+                <thead>
+                  <tr className="bg-slate-50 text-slate-400 border-b border-slate-100 uppercase text-[10px] font-bold">
+                    <th className="p-4">Material Details</th>
+                    <th className="p-4">Category</th>
+                    <th className="p-4">Stock Levels</th>
+                    <th className="p-4">Current Price</th>
+                    <th className="p-4 text-center">Reorder Restock</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-navy">
+                  {products.map((p) => {
+                    const isLow = p.stock <= p.lowStock;
+                    return (
+                      <tr key={p.id} className="hover:bg-slate-50/50">
+                        <td className="p-4">
+                          <span className="font-bold text-sm block">{p.name}</span>
+                          <span className="text-slate-400 text-xs block">Brand: {p.brand} | Grade: {p.grade}</span>
+                        </td>
+                        <td className="p-4 font-semibold text-slate-500">{p.category}</td>
+                        <td className="p-4">
+                          <span className={`font-bold ${isLow ? 'text-yellow-600' : 'text-navy'}`}>
+                            {p.stock.toLocaleString('en-IN')} {p.unit}s
+                          </span>
+                          {isLow && (
+                            <span className="block text-[10px] text-yellow-600 font-bold mt-0.5">
+                              <i className="fa-solid fa-triangle-exclamation mr-1"></i> Low Stock Threshold ({p.lowStock})
+                            </span>
+                          )}
+                        </td>
+                        <td className="p-4 font-semibold">₹{p.price.toLocaleString('en-IN')}/{p.unit}</td>
+                        <td className="p-4 text-center">
+                          <div className="flex justify-center items-center gap-2">
+                            <input 
+                              type="number" 
+                              id={`stock-add-${p.id}`}
+                              placeholder="+Qty" 
+                              className="w-16 bg-slate-50 border border-slate-200 rounded px-2 py-1 text-center font-bold text-xs" 
+                            />
+                            <button
+                              onClick={() => {
+                                const el = document.getElementById(`stock-add-${p.id}`);
+                                handleAddStock(p.id, el.value);
+                                el.value = '';
+                              }}
+                              className="bg-navy hover:bg-navy-light text-white text-[10px] font-bold py-1 px-3 rounded"
+                            >
+                              Add
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* TAB CONTENT: PRICE CONTROLLER */}
+          {activeTab === 'prices' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Price controller form */}
+              <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100">
+                <h3 className="font-display font-bold text-base text-navy border-b border-slate-100 pb-3 mb-4">
+                  Adjust Base Market Prices
+                </h3>
+                <form onSubmit={handleUpdatePrice} className="space-y-4 text-xs font-semibold text-slate-400">
+                  <div>
+                    <label className="block mb-1.5 uppercase">Select Commodity Category</label>
+                    <select
+                      value={selectedPriceCat}
+                      onChange={(e) => setSelectedPriceCat(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-semibold"
+                    >
+                      <option value="Steel TMT Bars">Steel TMT Bars (Fe-550D / Fe-550SD)</option>
+                      <option value="Cement">Cement (Grade 53 / PPC Bags)</option>
+                      <option value="Binding Wire">Binding Wire (Bundles)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block mb-1.5 uppercase">New Base Price (₹)</label>
+                    <input 
+                      type="number" 
+                      required
+                      placeholder="e.g. 55000 for Steel or 430 for Cement"
+                      value={newPriceValue}
+                      onChange={(e) => setNewPriceValue(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-mono font-semibold"
+                    />
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3 rounded-xl transition-all duration-300 shadow-glow uppercase text-xs tracking-wider"
+                  >
+                    Apply Live Price Update
+                  </button>
+                </form>
+              </div>
+
+              {/* Price History / Status Card */}
+              <div className="bg-white rounded-2xl p-6 shadow-premium border border-slate-100">
+                <h3 className="font-display font-bold text-base text-navy border-b border-slate-100 pb-3 mb-4">
+                  Current Live Pricing Index
+                </h3>
+                <div className="space-y-4">
+                  {pricesHistory.map((p, idx) => {
+                    const diff = p.currentPrice - p.previousPrice;
+                    return (
+                      <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div>
+                          <span className="text-xs text-slate-400 font-bold block">{p.category}</span>
+                          <span className="font-display font-black text-base text-navy">
+                            ₹{p.currentPrice.toLocaleString('en-IN')}/{p.category.includes('Cement') ? 'Bag' : p.category.includes('Wire') ? 'Bundle' : 'Ton'}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          <span className={`text-xs font-bold block ${diff >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {diff >= 0 ? '+' : ''}{diff.toLocaleString('en-IN')} ({Math.round(diff/p.previousPrice*100)}%)
+                          </span>
+                          <span className="text-[10px] text-slate-400">Last updated: {p.lastUpdated}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+        </section>
+      );
+    }
+
+    // --- COMPONENT: AUTHENTICATION FLOW (LOGIN/REGISTER) ---
+    function AuthPage({ setCurrentUser, navigate, addToast }) {
+      const [isLogin, setIsLogin] = useState(true);
+      const [email, setEmail] = useState('');
+      const [password, setPassword] = useState('');
+      const [name, setName] = useState('');
+      const [mobile, setMobile] = useState('');
+      const [role, setRole] = useState('customer');
+
+      // OTP Verification Simulation State
+      const [showOtpScreen, setShowOtpScreen] = useState(false);
+      const [otpVal, setOtpVal] = useState('');
+
+      const handleAuthSubmit = (e) => {
+        e.preventDefault();
+        
+        // Simulating Registration requiring OTP or direct login
+        if (isLogin) {
+          // Bypass auth logic for demo
+          if (email === 'admin@saiteja.com') {
+            const user = { name: 'Sai Teja (Admin)', email, role: 'admin', mobile: '9999999999' };
+            setCurrentUser(user);
+            addToast('Logged in as Admin successfully.');
+            navigate('admin');
+          } else {
+            const user = { name: name || 'Bharath Kumar', email, role: 'customer', mobile: mobile || '9876543210', gstin: '36AAAAA1111A1Z1', address: 'Plot 42, Hitec City, Hyderabad' };
+            setCurrentUser(user);
+            addToast('Logged in as Customer successfully.');
+            navigate('catalog');
+          }
+        } else {
+          // Show OTP Verification simulator
+          setShowOtpScreen(true);
+        }
+      };
+
+      const handleVerifyOtp = (e) => {
+        e.preventDefault();
+        if (otpVal.trim() === '1234' || otpVal.trim().length === 4) {
+          const user = { name, email, role, mobile, gstin: '36AAAAA1111A1Z1', address: 'Plot 42, Hitec City, Hyderabad' };
+          setCurrentUser(user);
+          addToast('OTP verified. Registered successfully!');
+          setShowOtpScreen(false);
+          if (role === 'admin') {
+            navigate('admin');
+          } else {
+            navigate('catalog');
+          }
+        } else {
+          addToast('Invalid OTP! Please enter "1234" for mock test verification.', 'error');
+        }
+      };
+
+      return (
+        <section className="py-16 max-w-md mx-auto px-4 sm:px-6">
+          <div className="bg-white rounded-3xl p-8 shadow-premium border border-slate-100 relative">
+            
+            {!showOtpScreen ? (
+              <div>
+                <div className="text-center mb-8">
+                  <h2 className="font-display font-extrabold text-2xl text-navy">
+                    {isLogin ? 'Welcome Back' : 'Create B2B Account'}
+                  </h2>
+                  <p className="text-slate-400 text-xs mt-1">
+                    {isLogin ? 'Log in to view live structural steel pricing' : 'Register your corporate firm for tax inputs'}
+                  </p>
+                </div>
+
+                <form onSubmit={handleAuthSubmit} className="space-y-4 text-xs font-semibold text-slate-400">
+                  {!isLogin && (
+                    <>
+                      <div>
+                        <label className="block mb-1.5 uppercase">Authorized Full Name</label>
+                        <input 
+                          type="text" 
+                          required 
+                          placeholder="e.g. Sai Teja"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-1.5 uppercase">Business Mobile Contact</label>
+                        <input 
+                          type="tel" 
+                          required 
+                          placeholder="e.g. 9876543210"
+                          value={mobile}
+                          onChange={(e) => setMobile(e.target.value)}
+                          className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                        />
+                      </div>
+                      <div>
+                        <label className="block mb-1.5 uppercase">Account Role Type</label>
+                        <select
+                          value={role}
+                          onChange={(e) => setRole(e.target.value)}
+                          className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-semibold"
+                        >
+                          <option value="customer">Contractor / Customer</option>
+                          <option value="admin">Platform Admin Manager</option>
+                        </select>
+                      </div>
+                    </>
+                  )}
+
+                  <div>
+                    <label className="block mb-1.5 uppercase">Email Address</label>
+                    <input 
+                      type="email" 
+                      required 
+                      placeholder="name@company.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between items-center mb-1.5">
+                      <label className="uppercase">Password</label>
+                      {isLogin && (
+                        <button 
+                          type="button"
+                          onClick={() => alert('Forgot Password simulation: Check email for verification link.')}
+                          className="text-teal hover:underline text-[10px] lowercase"
+                        >
+                          Forgot password?
+                        </button>
+                      )}
+                    </div>
+                    <input 
+                      type="password" 
+                      required 
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-medium"
+                    />
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-glow text-center text-xs uppercase tracking-wider mt-4"
+                  >
+                    {isLogin ? 'Login Securely' : 'Request OTP Verification'}
+                  </button>
+                </form>
+
+                <div className="text-center mt-6 text-xs text-slate-500">
+                  {isLogin ? (
+                    <span>Don't have a B2B account? <button onClick={() => setIsLogin(false)} className="text-teal font-semibold hover:underline">Register Here</button></span>
+                  ) : (
+                    <span>Already registered? <button onClick={() => setIsLogin(true)} className="text-teal font-semibold hover:underline">Login Here</button></span>
+                  )}
+                  
+                  {/* Preset login quick-help */}
+                  <div className="mt-6 p-3 bg-slate-50 border border-slate-100 rounded-xl text-left text-[11px] leading-relaxed">
+                    <strong className="text-navy block mb-1"><i className="fa-solid fa-circle-info text-teal mr-1"></i> Quick Test Accounts:</strong>
+                    <div className="flex justify-between">
+                      <span>Customer: <strong>customer@saiteja.com</strong></span>
+                      <span>Pass: <strong>customer123</strong></span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span>Admin Portal: <strong>admin@saiteja.com</strong></span>
+                      <span>Pass: <strong>admin123</strong></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // OTP SCREEN
+              <div>
+                <div className="text-center mb-8">
+                  <h2 className="font-display font-extrabold text-2xl text-navy">OTP Verification</h2>
+                  <p className="text-slate-400 text-xs mt-1">We sent a verification SMS to your phone <strong>{mobile}</strong>.</p>
+                </div>
+
+                <form onSubmit={handleVerifyOtp} className="space-y-4 text-xs font-semibold text-slate-400">
+                  <div>
+                    <label className="block mb-1.5 uppercase">Enter 4-Digit OTP Code</label>
+                    <input 
+                      type="text" 
+                      required
+                      maxLength="4"
+                      placeholder="e.g. 1234"
+                      value={otpVal}
+                      onChange={(e) => setOtpVal(e.target.value)}
+                      className="w-full bg-slate-50 rounded-xl px-4 py-3 text-sm text-navy focus:outline-none focus:ring-2 focus:ring-teal border border-slate-100 font-bold text-center tracking-widest"
+                    />
+                    <p className="text-[10px] text-slate-400 mt-2 text-center">
+                      *Please type <strong>1234</strong> to pass the mockup validation check.
+                    </p>
+                  </div>
+
+                  <button 
+                    type="submit"
+                    className="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3.5 rounded-xl transition-all duration-300 shadow-glow text-center text-xs uppercase tracking-wider"
+                  >
+                    Confirm OTP & Register
+                  </button>
+
+                  <button 
+                    type="button" 
+                    onClick={() => setShowOtpScreen(false)}
+                    className="w-full bg-slate-200 text-navy font-semibold py-2.5 rounded-xl text-center text-xs transition-colors"
+                  >
+                    Cancel Registration
+                  </button>
+                </form>
+              </div>
+            )}
+
+          </div>
+        </section>
+      );
+    }
+
+    // --- COMPONENT: DIGITAL INVOICE PRINT MODAL ---
+    function InvoiceModal({ order, onClose }) {
+      const handlePrint = () => {
+        window.print();
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 bg-navy/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-3xl w-full shadow-premium border border-slate-100 overflow-hidden my-8">
+            {/* Modal header options */}
+            <div className="bg-navy text-white px-6 py-4 flex justify-between items-center print:hidden">
+              <span className="font-display font-bold text-sm">GST Tax Invoice Generated</span>
+              <div className="flex gap-2">
+                <button 
+                  onClick={handlePrint}
+                  className="bg-teal hover:bg-teal-dark text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+                >
+                  <i className="fa-solid fa-print"></i> Print / Save PDF
+                </button>
+                <button 
+                  onClick={onClose}
+                  className="bg-slate-700 hover:bg-slate-65 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            {/* PRINT AREA */}
+            <div id="print-area" className="p-8 sm:p-12 space-y-8 bg-white text-slate-800 text-xs">
+              
+              {/* Header */}
+              <div className="flex justify-between items-start border-b border-slate-200 pb-6">
+                <div>
+                  <h1 className="font-display font-extrabold text-2xl text-navy">SAI TEJA TRADERS</h1>
+                  <span className="text-[10px] text-slate-400 block font-semibold">STEEL & CEMENT SUPPLY HUB</span>
+                  <p className="text-[10px] text-slate-500 mt-2 max-w-xs">
+                    Industrial Estate, Jeedimetla, Hyderabad, Telangana, 500055. <br/>
+                    Email: finance@saitejatraders.com | Support: +91 90001 23456
+                  </p>
+                </div>
+                <div className="text-right">
+                  <h2 className="font-display font-black text-xl text-teal uppercase">TAX INVOICE</h2>
+                  <div className="mt-2 text-slate-500 space-y-0.5">
+                    <p>GSTIN: <strong>36AAAAA1111A1Z1</strong></p>
+                    <p>Invoice No: <strong>INV-{order.id.replace('ORD-', '')}</strong></p>
+                    <p>Date of Issue: <strong>{order.date}</strong></p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bill To & Ship To */}
+              <div className="grid grid-cols-2 gap-8 border-b border-slate-200 pb-6">
+                <div>
+                  <h3 className="font-bold text-[10px] uppercase text-slate-400 mb-2">Billed To (Customer Details):</h3>
+                  <p className="font-bold text-sm text-navy">{order.customerName}</p>
+                  <p className="text-slate-500 mt-1">Mobile: {order.customerMobile}</p>
+                  <p className="text-slate-500">Corporate GSTIN: <strong className="uppercase">{order.customerGST}</strong></p>
+                </div>
+                <div>
+                  <h3 className="font-bold text-[10px] uppercase text-slate-400 mb-2">Logistics Site Address:</h3>
+                  <p className="text-slate-600 leading-relaxed">{order.deliveryAddress}</p>
+                  <p className="text-slate-500 mt-2">Preferred Delivery Date: <strong>{order.deliveryDate}</strong></p>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <div>
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-300 text-slate-400 font-bold uppercase text-[9px]">
+                      <th className="py-2.5">Material Description</th>
+                      <th className="py-2.5 text-right">Qty</th>
+                      <th className="py-2.5 text-right">Unit Price (₹)</th>
+                      <th className="py-2.5 text-right">Total (₹)</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 text-navy font-medium">
+                    {order.items.map((it, idx) => (
+                      <tr key={idx}>
+                        <td className="py-3 font-semibold text-sm">{it.name}</td>
+                        <td className="py-3 text-right">{it.quantity} {it.unit}s</td>
+                        <td className="py-3 text-right">₹{it.price.toLocaleString('en-IN')}</td>
+                        <td className="py-3 text-right">₹{(it.price * it.quantity).toLocaleString('en-IN')}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Totals */}
+              <div className="border-t border-slate-200 pt-6 flex justify-end">
+                <div className="w-64 space-y-2 text-slate-500 font-semibold text-right">
+                  <div className="flex justify-between">
+                    <span>Taxable Value (Subtotal):</span>
+                    <span className="text-navy">₹{order.subtotal.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Integrated GST (18%):</span>
+                    <span className="text-navy">₹{order.gst.toLocaleString('en-IN')}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Logistics Flat Transport:</span>
+                    <span className="text-green-600 font-bold">FREE</span>
+                  </div>
+                  <hr className="border-slate-200 my-1" />
+                  <div className="flex justify-between text-sm font-display font-extrabold text-navy">
+                    <span>Total Tax-Paid Bill:</span>
+                    <span className="text-teal text-base">₹{order.total.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Invoice footer sign */}
+              <div className="flex justify-between items-end border-t border-slate-100 pt-8 text-[9px] text-slate-400">
+                <div>
+                  <p>Payment Mode: <strong>{order.paymentMethod}</strong></p>
+                  <p>Payment Status: <strong>{order.paymentStatus}</strong></p>
+                </div>
+                <div className="text-center">
+                  <div className="w-28 border-b border-slate-300 mx-auto mb-1"></div>
+                  <span>Authorized Signature</span>
+                  <p className="font-bold text-navy mt-0.5">Sai Teja Traders Finance</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- INITIAL RENDER ---
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+
+  </script>
+</body>
+</html>
